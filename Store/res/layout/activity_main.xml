@@ -1,0 +1,189 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="${relativePackage}.${activityClass}" >
+
+
+    		<LinearLayout 
+	      	android:layout_width="match_parent"
+    		android:layout_height="wrap_content"
+    		
+    		android:orientation="horizontal">    
+ 
+    <TextView 
+        android:layout_width="wrap_content"
+
+        android:layout_marginLeft="10dp"
+
+          android:textSize="20dp"
+        android:layout_height="wrap_content"
+        android:text="商品"
+        />
+	<EditText
+	    android:id="@+id/et_name"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:editable="false"
+        android:onClick="btn_item_click"
+        android:singleLine="true"
+        android:hint="点击选取" />
+
+
+
+    <TextView 
+        android:layout_width="wrap_content"
+        android:textSize="20dp"
+        android:layout_height="wrap_content"
+        android:text="数量"
+        />
+    
+     <EditText
+	    android:id="@+id/et_number"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+
+        android:layout_height="wrap_content"
+        android:numeric="integer"
+        android:selectAllOnFocus="true"
+        android:hint="数量" />		
+		</LinearLayout>
+
+	<LinearLayout 
+	      	android:layout_width="match_parent"
+    		android:layout_height="wrap_content"
+    		android:orientation="horizontal">    
+
+	
+	<TextView 
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:textSize="20dp"
+        android:layout_height="wrap_content"
+        android:text="单价"
+        />
+	<EditText
+	    android:id="@+id/et_price"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:numeric="integer"
+        android:layout_height="wrap_content"
+        android:selectAllOnFocus="true"
+        android:hint="单价" />
+<TextView 
+        android:layout_width="wrap_content"
+
+        
+        android:textSize="20dp"
+        android:layout_height="wrap_content"
+        android:text="金额"
+        />
+	<EditText
+	    android:id="@+id/et_amount"
+        android:layout_width="0dp"
+           android:numeric="integer"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:selectAllOnFocus="true"
+        android:hint="金额" />	
+	
+
+	</LinearLayout>
+	<LinearLayout 
+	      	android:layout_width="match_parent"
+    		android:layout_height="wrap_content"
+    		android:orientation="horizontal"> 	
+    <TextView 
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:textSize="20dp"
+        android:layout_height="wrap_content"
+        android:text="备注"/> 
+
+	<EditText
+	    android:id="@+id/et_remark"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+                
+        android:selectAllOnFocus="true"
+        android:hint="备注" />
+
+	    	<TextView 
+        android:layout_width="wrap_content"
+       
+        android:textSize="20dp"
+        android:layout_height="wrap_content"
+        android:text="成本"
+        />
+	<EditText
+	    android:id="@+id/et_cost"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:numeric="integer"
+        android:selectAllOnFocus="true"
+        android:hint="成本" />	
+
+		
+	</LinearLayout>
+
+  
+	<LinearLayout 
+	      	android:layout_width="match_parent"
+    		android:layout_height="wrap_content"
+    		android:padding="5dp"
+    		android:orientation="horizontal"> 	
+
+
+	  
+
+	  		  	<Button
+        android:id="@+id/btn_sum"
+        android:onClick="btn_sum_click"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        		android:background="@drawable/button"
+		android:textColor="#FFFFFF"
+        android:layout_height="wrap_content"
+        android:layout_margin="1dp"
+        android:text="统计" />
+		
+
+	  		<Button
+        android:id="@+id/btn_list"
+        android:onClick="btn_list_click"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+    		android:background="@drawable/button"
+		android:textColor="#FFFFFF"
+        android:layout_height="wrap_content"
+        android:layout_margin="1dp"
+        android:text="浏览" />
+
+		<Button
+        android:id="@+id/btn_save"
+        android:onClick="btn_save_click"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+		android:background="@drawable/button"
+		android:textColor="#FFFFFF"
+        android:layout_height="wrap_content"
+        android:layout_margin="1dp"
+        android:text="保存" />
+
+		
+		
+			</LinearLayout>
+	
+
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    </ListView>
+
+
+</LinearLayout>

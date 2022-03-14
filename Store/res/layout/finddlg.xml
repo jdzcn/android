@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+<TextView 
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:textSize="20dp"
+    android:background="@color/mycolor"
+    android:textColor="#FFFFFF"
+    android:gravity="center"
+    android:text="查询"/> 
+<View 
+    android:layout_width="match_parent"
+    android:background="#000000"
+    android:layout_height="1dp"/>        
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    >
+<TextView 
+    android:layout_width="0dp"
+    android:layout_weight="1"
+    android:layout_height="wrap_content"
+    android:textSize="20dp"
+    android:layout_marginLeft="5dp"
+    android:text="类型"/> 
+
+    />
+    <Spinner 
+        android:id="@+id/sp_style"
+        android:layout_width="0dp"
+   		android:layout_weight="4"
+    	android:layout_height="wrap_content"
+        android:entries="@array/style"/>
+</LinearLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:padding="10dp"
+    android:layout_height="match_parent"
+    >
+<TextView 
+    android:layout_width="0dp"
+    android:layout_weight="1"
+    android:layout_height="wrap_content"
+    android:textSize="20dp"
+    android:layout_marginLeft="5dp"
+    android:text="范围"/> 
+    <Spinner 
+        android:id="@+id/sp_year"
+        android:layout_width="0dp"
+   		android:layout_weight="2"
+    	android:layout_height="wrap_content"
+       	android:entries="@array/year"
+       />
+        <Spinner 
+        android:id="@+id/sp_month"
+        android:layout_width="0dp"
+   		android:layout_weight="2"
+    	android:layout_height="wrap_content"
+        android:entries="@array/month"
+        />
+
+</LinearLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    >
+<TextView 
+    android:layout_width="0dp"
+    android:layout_weight="1"
+    android:layout_height="wrap_content"
+    android:textSize="20dp"
+    android:layout_marginLeft="5dp"
+    android:text="备注"/> 
+<EditText
+    android:id="@+id/et_remark"
+    android:layout_width="0dp"
+    android:layout_weight="4"
+    android:layout_height="wrap_content"
+
+    />
+</LinearLayout>    
+
+</LinearLayout>
