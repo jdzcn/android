@@ -1,6 +1,8 @@
 package com.example.sale;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,11 +43,11 @@ public class ProductAdapter extends ArrayAdapter<Product> {
         viewHolder.pName.setText(p.getName());
         viewHolder.pPrice.setText(p.getPrice()+"");
         viewHolder.pCost.setText(p.getCost()+"");
-/*
+
         byte[] d = p.getImage();
         Bitmap b1 = BitmapFactory.decodeByteArray(d, 0, d.length);
-        holder.imgView.setImageBitmap(b1);
-*/
+        viewHolder.pImage.setImageBitmap(b1);
+
         return view;
     }
 

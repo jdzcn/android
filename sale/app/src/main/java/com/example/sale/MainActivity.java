@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -41,10 +42,19 @@ public class MainActivity extends AppCompatActivity {
         editname=(EditText)findViewById(R.id.edit_Name);
         editprice=(EditText)findViewById(R.id.edit_Price);
         editcost=(EditText)findViewById(R.id.edit_Cost);
+        Cursor cursor=database.rawQuery("select * from product", null);
+        //database.execSQL("insert into product (name,images,cid) values("+"'jiuju','image1.jpg'"+",1)");
+
+        if (cursor.moveToFirst()) {
+            do {
+                Product p=new Product(cursor.getString(1),cursor.getInt(2),cursor.getInt(3),cursor.getBlob(4));
+                pList.add(p);
+                p=null;
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
 
 
-
-        initFruits(); // 初始化水果数据
         adapter = new ProductAdapter(MainActivity.this, R.layout.product_item, pList);
         listView = (ListView) findViewById(R.id.listview);
         listView.setAdapter(adapter);
@@ -58,14 +68,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void initFruits() {
-        for (int i = 0; i < 2; i++) {
-            Product apple = new Product("Apple", 100,50);
-            pList.add(apple);
-            Product orange = new Product("orange", 200,10);
-            pList.add(orange);
-        }
-    }
+
     public void  save(View view) {
         byte[] imgdata=getByteArrayFromImageView(img);
         ContentValues cv = new ContentValues();

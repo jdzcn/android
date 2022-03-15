@@ -5,13 +5,13 @@ public class Product {
     private String name;
     private int price;
     private int cost;
-    //private byte[] image;
+    private byte[] image;
 
-    public Product(String name, int price,int cost) {
+    public Product(String name, int price,int cost,byte[] image) {
         this.name = name;
         this.price=price;
         this.cost=cost;
-        //this.image = image;
+        this.image = image;
     }
     public int getPrice() {
         return price;
@@ -24,6 +24,6 @@ public class Product {
         return name;
     }
 
-    //public byte[] getImage() {return image;}
+    public byte[] getImage() {return image;}
 
 }
