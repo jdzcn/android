@@ -38,18 +38,20 @@ public class productAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
+        product p=mList.get(i);
         LayoutInflater inflater = LayoutInflater.from(mContext);
         view = inflater.inflate(R.layout.product_item, viewGroup, false);
         if (view != null) {
             ImageView iv = (ImageView) view.findViewById(R.id.pimage);
             TextView tv= (TextView) view.findViewById(R.id.editName);
-            byte[] d = mList.get(i).img;
+
+            byte[] d=p.img;
 
             //String path=Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+"/"+d;
-            Bitmap b1 = BitmapFactory.decodeByteArray(d, 0, d.length);
+            Bitmap b1= BitmapFactory.decodeByteArray(d, 0, d.length);
             iv.setImageBitmap(b1);
 
-            tv.setText(mList.get(i).name);
+            tv.setText(p.name);
         }
         return view;
     }

@@ -1,25 +1,19 @@
-package com.example.sqliteimage;
+package com.example.sale;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.AlertDialog;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
@@ -29,56 +23,57 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     public saleHelper db;
     public SQLiteDatabase database;
-    private List<product> mlist=new ArrayList<>();
-    RecyclerViewAdapter adapter;
-    productAdapter myAdapter;
-    private RecyclerView rview;
+    private List<Product> pList = new ArrayList<Product>();
     int SELECT_PICTURE = 200;
     ImageView img;
-    EditText editname;
-    LinearLayoutManager layoutManager;
+    EditText editname,editprice,editcost;
+    ProductAdapter adapter;
+    ListView listView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         db=new saleHelper(this);
         database=db.getWritableDatabase();
-        img=(ImageView)findViewById(R.id.imageView);
-        editname=(EditText) findViewById(R.id.editName);
-        Cursor cursor=database.rawQuery("select name,img from product", null);
-        //database.execSQL("insert into product (name,images,cid) values("+"'jiuju','image1.jpg'"+",1)");
 
-        if (cursor.moveToFirst()) {
-            do {
-                product p=new product();
-                p.name=cursor.getString(0);
-                p.img=cursor.getBlob(1);
-                mlist.add(p);
-                p=null;
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
+        img=(ImageView)findViewById(R.id.image_product);
+        editname=(EditText)findViewById(R.id.edit_Name);
+        editprice=(EditText)findViewById(R.id.edit_Price);
+        editcost=(EditText)findViewById(R.id.edit_Cost);
 
-        Toast.makeText(MainActivity.this, mlist.size()+"条记录", Toast.LENGTH_SHORT).show();
-        myAdapter= new productAdapter(mlist,this);
-        adapter = new RecyclerViewAdapter(mlist);
-        Spinner sp=(Spinner)findViewById(R.id.spinner);
-        //sp.setAdapter(adapter);
-        rview=(RecyclerView)findViewById(R.id.recyclerview);
-        layoutManager=new LinearLayoutManager(this);
-        //layoutManager.setOrientation(layoutManager.HORIZONTAL);
-        rview.setLayoutManager(layoutManager);
-        rview.addItemDecoration(new DividerItemDecoration(rview.getContext(), DividerItemDecoration.VERTICAL));
-        rview.setAdapter(adapter);
+
+
+        initFruits(); // 初始化水果数据
+        adapter = new ProductAdapter(MainActivity.this, R.layout.product_item, pList);
+        listView = (ListView) findViewById(R.id.listview);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                Product fruit = pList.get(position);
+                Toast.makeText(MainActivity.this, fruit.getName(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
+    private void initFruits() {
+        for (int i = 0; i < 2; i++) {
+            Product apple = new Product("Apple", 100,50);
+            pList.add(apple);
+            Product orange = new Product("orange", 200,10);
+            pList.add(orange);
+        }
+    }
     public void  save(View view) {
         byte[] imgdata=getByteArrayFromImageView(img);
         ContentValues cv = new ContentValues();
 
         cv.put("img", imgdata);
         cv.put("name", editname.getText().toString());
-
+        cv.put("price",String.valueOf(editprice.getText()));
+        cv.put("cost",String.valueOf(editcost.getText()));
         database.insert("product", null, cv);
         Toast.makeText(MainActivity.this, "Save sucessful.", Toast.LENGTH_SHORT).show();
         final Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
@@ -147,5 +142,4 @@ public class MainActivity extends AppCompatActivity {
         //ImageView yourImageView = (ImageView) findViewById(R.id.yourImageView);
         //Bitmap bitmap = ((BitmapDrawable)yourImageView.getDrawable()).getBitmap();
     }
-
 }
