@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class saleHelper extends SQLiteOpenHelper{
     private static final int DB_VERSION = 1;
-    private static final String DB_NAME = "image.db";
+    private static final String DB_NAME = "sale.db";
     
     public static final String CREATE_SALE = "create table sale (id integer primary key AUTOINCREMENT, date date,pid integer,price integer,number integer,amount integer,cost integer,remark text)";
     public static final String CREATE_PRODUCT = "create table product (pid integer primary key AUTOINCREMENT,name text,price integer,cost integer,img blob)";
