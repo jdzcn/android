@@ -21,88 +21,101 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class SaleActivity extends AppCompatActivity {
     public saleHelper db;
     private boolean viewGroupIsVisible = true;
     public SQLiteDatabase database;
-    private List<Product> pList = new ArrayList<Product>();
+    private List<Sale> pList = new ArrayList<Sale>();
     int SELECT_PICTURE = 200;
     ImageView img;
     private View mViewGroup;
     EditText ednum,edprice,edamount,edcost;
-    ProductAdapter adapter;
+    SaleAdapter adapter;
     ListView listView;
     int sel=0;
-    TextView textname;
+    TextView tvname,tvdate;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sale);
 
-        db=new saleHelper(this);
-        database=db.getWritableDatabase();
+        db = new saleHelper(this);
+        database = db.getWritableDatabase();
         mViewGroup = findViewById(R.id.sale);
-        textname=(TextView)findViewById(R.id.textname);
-        img=(ImageView)findViewById(R.id.image_product);
-        ednum=(EditText)findViewById(R.id.ednum);
-        edprice=(EditText)findViewById(R.id.edprice);
-        edamount=(EditText)findViewById(R.id.edamount);
-        edcost=(EditText)findViewById(R.id.edcost);
+        tvname = (TextView) findViewById(R.id.textname);
+        tvdate = (TextView) findViewById(R.id.textdate);
+        tvdate.setText(getdate());
+        img = (ImageView) findViewById(R.id.image_product);
+        ednum = (EditText) findViewById(R.id.ednum);
+        edprice = (EditText) findViewById(R.id.edprice);
+        edamount = (EditText) findViewById(R.id.edamount);
+        edcost = (EditText) findViewById(R.id.edcost);
 
-        Cursor cursor=database.rawQuery("select * from product", null);
+        Cursor c = database.rawQuery("select id,date,name,number,sale.price,amount,sale.cost,img from sale,product where sale.pid=product.pid order by id desc limit 20", null);
         //database.execSQL("insert into product (name,images,cid) values("+"'jiuju','image1.jpg'"+",1)");
 
-        if (cursor.moveToFirst()) {
+        if (c.moveToFirst()) {
             do {
-                Product p=new Product(cursor.getInt(0),cursor.getString(1),cursor.getInt(2),cursor.getInt(3),cursor.getBlob(4));
+                Sale p = new Sale();
+                p.id = c.getInt(0);
+                p.date = c.getString(1);
+                p.name = c.getString(2);
+                p.number = c.getInt(3);
+                p.price = c.getInt(4);
+                p.amount = c.getInt(5);
+                p.cost = c.getInt(6);
+                p.image = c.getBlob(7);
                 pList.add(p);
-                p=null;
-            } while (cursor.moveToNext());
+                p = null;
+            } while (c.moveToNext());
         }
-        cursor.close();
+        c.close();
 
 
-        adapter = new ProductAdapter(SaleActivity.this, R.layout.product_item, pList);
+        adapter = new SaleAdapter(SaleActivity.this, R.layout.saleitem, pList);
         listView = (ListView) findViewById(R.id.listview);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                Product fruit = pList.get(position);
-                Toast.makeText(SaleActivity.this, fruit.getName(), Toast.LENGTH_SHORT).show();
-            }
-        });
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (viewGroupIsVisible) {
-                    mViewGroup.setVisibility(View.GONE);
-                } else {
-                    mViewGroup.setVisibility(View.VISIBLE);
-                }
-
-                viewGroupIsVisible = !viewGroupIsVisible;
-
+                Sale fruit = pList.get(position);
+                Toast.makeText(SaleActivity.this, fruit.id + "", Toast.LENGTH_SHORT).show();
             }
         });
     }
+    public void hideClick(View view) {
+        if (viewGroupIsVisible) {
+            mViewGroup.setVisibility(View.GONE);
+        } else {
+            mViewGroup.setVisibility(View.VISIBLE);
+        }
 
+        viewGroupIsVisible = !viewGroupIsVisible;
+    }
+
+
+    public String getdate() {
+        SimpleDateFormat d=new SimpleDateFormat("yyyy-MM-dd");
+        return d.format(new Date());
+    }
 
     public void  save(View view) {
-        byte[] imgdata=getByteArrayFromImageView(img);
         ContentValues cv = new ContentValues();
+        cv.put("date", getdate());
+        cv.put("pid",sel);
+        cv.put("number",String.valueOf(ednum.getText()));
+        cv.put("price",String.valueOf(edprice.getText()));
+        cv.put("amount",String.valueOf(edamount.getText()));
+        cv.put("cost",String.valueOf(edcost.getText()));
+        database.insert("sale", null, cv);
+        Toast.makeText(SaleActivity.this, "添加成功！.", Toast.LENGTH_SHORT).show();
 
-        cv.put("img", imgdata);
-        //cv.put("name", editname.getText().toString());
-        //cv.put("price",String.valueOf(editprice.getText()));
-        //cv.put("cost",String.valueOf(editcost.getText()));
-        database.insert("product", null, cv);
-        Toast.makeText(SaleActivity.this, "Save sucessful.", Toast.LENGTH_SHORT).show();
         final Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -122,11 +135,11 @@ public class SaleActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     sel=data.getIntExtra("data_return",0);
                     String sql="select name,price,cost,img from product where pid="+sel;
-                    textname.setText(sql);
+
 
                     Cursor c=database.rawQuery(sql,null);
                     if(c.moveToFirst()) {
-                        textname.setText(c.getString(0)+"(id:"+sel+")");
+                        tvname.setText(c.getString(0)+"(id:"+sel+")");
 
                         ednum.setText(c.getCount() + "");
                         edprice.setText(c.getInt(1) + "");

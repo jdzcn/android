@@ -44,11 +44,6 @@ public class ProductActivity extends AppCompatActivity {
         editname=(EditText)findViewById(R.id.edit_Name);
         editprice=(EditText)findViewById(R.id.edit_Price);
         editcost=(EditText)findViewById(R.id.edit_Cost);
-        btn.setVisibility(8);
-        img.setVisibility(8);
-        editname.setVisibility(8);
-        editprice.setVisibility(8);
-        editcost.setVisibility(8);
         Cursor cursor=database.rawQuery("select * from product", null);
         //database.execSQL("insert into product (name,images,cid) values("+"'jiuju','image1.jpg'"+",1)");
 
