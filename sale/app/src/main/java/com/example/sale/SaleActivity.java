@@ -18,16 +18,20 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SaleActivity extends AppCompatActivity {
     public saleHelper db;
+    private boolean viewGroupIsVisible = true;
     public SQLiteDatabase database;
     private List<Product> pList = new ArrayList<Product>();
     int SELECT_PICTURE = 200;
     ImageView img;
+    private View mViewGroup;
     EditText ednum,edprice,edamount,edcost;
     ProductAdapter adapter;
     ListView listView;
@@ -40,7 +44,7 @@ public class SaleActivity extends AppCompatActivity {
 
         db=new saleHelper(this);
         database=db.getWritableDatabase();
-
+        mViewGroup = findViewById(R.id.sale);
         textname=(TextView)findViewById(R.id.textname);
         img=(ImageView)findViewById(R.id.image_product);
         ednum=(EditText)findViewById(R.id.ednum);
@@ -70,6 +74,20 @@ public class SaleActivity extends AppCompatActivity {
                                     int position, long id) {
                 Product fruit = pList.get(position);
                 Toast.makeText(SaleActivity.this, fruit.getName(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (viewGroupIsVisible) {
+                    mViewGroup.setVisibility(View.GONE);
+                } else {
+                    mViewGroup.setVisibility(View.VISIBLE);
+                }
+
+                viewGroupIsVisible = !viewGroupIsVisible;
+
             }
         });
     }
