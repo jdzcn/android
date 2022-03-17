@@ -1,6 +1,8 @@
 package com.example.sale;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.ContentValues;
 import android.content.Intent;
@@ -37,6 +39,16 @@ public class ProductActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product);
 
+        Toolbar myChildToolbar =
+                (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myChildToolbar);
+
+        // Get a support ActionBar corresponding to this toolbar
+        ActionBar ab = getSupportActionBar();
+
+        // Enable the Up button
+        ab.setDisplayHomeAsUpEnabled(true);
+
         db=new saleHelper(this);
         database=db.getWritableDatabase();
         btn=(Button)findViewById(R.id.button);
@@ -44,22 +56,11 @@ public class ProductActivity extends AppCompatActivity {
         editname=(EditText)findViewById(R.id.edit_Name);
         editprice=(EditText)findViewById(R.id.edit_Price);
         editcost=(EditText)findViewById(R.id.edit_Cost);
-        Cursor cursor=database.rawQuery("select * from product", null);
-        //database.execSQL("insert into product (name,images,cid) values("+"'jiuju','image1.jpg'"+",1)");
-
-        if (cursor.moveToFirst()) {
-            do {
-                Product p=new Product(cursor.getInt(0),cursor.getString(1),cursor.getInt(2),cursor.getInt(3),cursor.getBlob(4));
-                pList.add(p);
-                p=null;
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-
-
-        adapter = new ProductAdapter(ProductActivity.this, R.layout.product_item, pList);
         listView = (ListView) findViewById(R.id.listview);
-        listView.setAdapter(adapter);
+        refreshdata();
+
+
+        //listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
@@ -72,6 +73,21 @@ public class ProductActivity extends AppCompatActivity {
         });
     }
 
+    public void refreshdata() {
+        Cursor cursor=database.rawQuery("select * from product order by pid desc", null);
+        adapter=null;pList.clear();
+        if (cursor.moveToFirst()) {
+            do {
+                Product p=new Product(cursor.getInt(0),cursor.getString(1),cursor.getInt(2),cursor.getInt(3),cursor.getBlob(4));
+                pList.add(p);
+                p=null;
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        adapter = new ProductAdapter(ProductActivity.this, R.layout.product_item, pList);
+        adapter.notifyDataSetChanged();
+        listView.setAdapter(adapter);
+    }
 
     public void  save(View view) {
         byte[] imgdata=getByteArrayFromImageView(img);
@@ -83,9 +99,12 @@ public class ProductActivity extends AppCompatActivity {
         cv.put("cost",String.valueOf(editcost.getText()));
         database.insert("product", null, cv);
         Toast.makeText(ProductActivity.this, "Save sucessful.", Toast.LENGTH_SHORT).show();
-        final Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+
+        refreshdata();
+
+        //final Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        //startActivity(intent);
     }
 
     public void  loadimage(View view) {
