@@ -9,9 +9,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -32,7 +34,7 @@ public class ProductActivity extends AppCompatActivity {
     int SELECT_PICTURE = 200;
     ImageView img;
     Button btn;
-    EditText editname,editprice,editcost;
+    EditText editid,editname,editprice,editcost;
     ProductAdapter adapter;
     ListView listView;
     String select;
@@ -69,6 +71,7 @@ public class ProductActivity extends AppCompatActivity {
         database=db.getWritableDatabase();
         btn=(Button)findViewById(R.id.button);
         img=(ImageView)findViewById(R.id.image_product);
+        editid=(EditText)findViewById(R.id.edit_id);
         editname=(EditText)findViewById(R.id.edit_Name);
         editprice=(EditText)findViewById(R.id.edit_Price);
         editcost=(EditText)findViewById(R.id.edit_Cost);
@@ -81,10 +84,24 @@ public class ProductActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                Intent intent=new Intent();
-                intent.putExtra("data_return",pList.get(position).getPid());
-                setResult(RESULT_OK,intent);
-                finish();
+                Product p=pList.get(position);
+                if(select.equals("yes")) {
+                    Intent intent = new Intent();
+                    intent.putExtra("data_return", p.getPid());
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
+                else
+                {
+                    editid.setText(p.getPid()+"");
+                    editname.setText(p.getName());
+                    editprice.setText(p.getPrice()+"");
+                    editcost.setText(p.getCost()+"");
+                    byte[] d = p.getImage();
+                    Bitmap b1 = BitmapFactory.decodeByteArray(d, 0, d.length);
+                    img.setImageBitmap(b1);
+
+                }
             }
         });
     }
@@ -107,6 +124,7 @@ public class ProductActivity extends AppCompatActivity {
     }
 
     public void  save(View view) {
+        if(TextUtils.isEmpty(editname.getText())) return;
         byte[] imgdata=getByteArrayFromImageView(img);
         ContentValues cv = new ContentValues();
 
@@ -114,7 +132,10 @@ public class ProductActivity extends AppCompatActivity {
         cv.put("name", editname.getText().toString());
         cv.put("price",String.valueOf(editprice.getText()));
         cv.put("cost",String.valueOf(editcost.getText()));
-        database.insert("product", null, cv);
+
+        if(TextUtils.isEmpty(editid.getText())) database.insert("product", null, cv);
+        else database.update("product", cv, "pid = ?", new String[]{editid.getText().toString()});
+
         Toast.makeText(ProductActivity.this, "Save sucessful.", Toast.LENGTH_SHORT).show();
 
         refreshdata();

@@ -203,12 +203,12 @@ public class SaleActivity extends AppCompatActivity {
                 return true;
             case R.id.m_export:
 
-                copyfile((Environment.getDataDirectory().getAbsolutePath() + "/data/" + this.getPackageName() + "/databases/sale.db"),(Environment.getExternalStorageDirectory().getAbsolutePath() + "/sale.db"),true);
+                copyfile((Environment.getDataDirectory().getAbsolutePath() + "/data/" + this.getPackageName() + "/databases/sale.db"),(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download/sale.db"),true);
 
                 return true;
             case R.id.m_import:
 
-                copyfile((Environment.getExternalStorageDirectory().getAbsolutePath() + "/sale.db"),(Environment.getDataDirectory().getAbsolutePath() + "/data/" +getPackageName() + "/databases/sale.db"),false);
+                copyfile((Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download/sale.db"),(Environment.getDataDirectory().getAbsolutePath() + "/data/" +getPackageName() + "/databases/sale.db"),false);
 
 
                 return true;
