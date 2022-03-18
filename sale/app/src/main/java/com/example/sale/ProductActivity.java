@@ -48,12 +48,15 @@ public class ProductActivity extends AppCompatActivity {
 
         mViewGroup = findViewById(R.id.product);
         Log.d("product",select);
-
-        if(select.equals("yes")) mViewGroup.setVisibility(View.GONE);
-        else mViewGroup.setVisibility(View.VISIBLE);
-
         Toolbar myChildToolbar =
                 (Toolbar) findViewById(R.id.my_toolbar);
+        if(select.equals("yes")) {
+            myChildToolbar.setTitle("选择商品");
+            mViewGroup.setVisibility(View.GONE);
+        }
+
+
+
         setSupportActionBar(myChildToolbar);
 
         // Get a support ActionBar corresponding to this toolbar
