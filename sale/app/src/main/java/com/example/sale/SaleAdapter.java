@@ -51,7 +51,7 @@ public class SaleAdapter extends ArrayAdapter<Sale> {
         viewHolder.tvprice.setText("x"+p.price);
         int a=p.amount;
         int c=p.cost;
-        viewHolder.tvamount.setText(""+a);
+        viewHolder.tvamount.setText("="+a);
         viewHolder.tvcost.setText(c+"");
 
         int profit=p.amount-p.cost;

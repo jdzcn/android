@@ -19,6 +19,7 @@ import android.os.Environment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,7 +55,7 @@ public class SaleActivity extends AppCompatActivity {
     SaleAdapter adapter;
     ListView listView;
     int sel=0,prodcost;
-    TextView tvname,tvdate;
+    TextView tvname,tvdate,tvmonth,tvtoday;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +69,8 @@ public class SaleActivity extends AppCompatActivity {
         mViewGroup = findViewById(R.id.sale);
         tvname = (TextView) findViewById(R.id.textname);
         tvdate = (TextView) findViewById(R.id.textdate);
+        tvmonth = (TextView) findViewById(R.id.tvMonth);
+        tvtoday = (TextView) findViewById(R.id.tvToday);
         tvdate.setText(getdate());
         img = (ImageView) findViewById(R.id.image_product);
         ednum = (EditText) findViewById(R.id.ednum);
@@ -162,7 +165,18 @@ public class SaleActivity extends AppCompatActivity {
             } while (c.moveToNext());
         }
         c.close();
-
+        String sql="select sum(amount-cost) as profit from sale where date='"+getdate()+"'";
+        Cursor s=database.rawQuery(sql,null);
+        //Log.d("sale",s.getCount()+sql);
+        //Toast.makeText(SaleActivity.this, s.getCount()+sql, Toast.LENGTH_SHORT).show();
+        if(s.moveToFirst()) tvtoday.setText(s.getInt(0)+"");
+        s.close();
+        sql="select sum(amount-cost) as profit from sale where substr(date,1,7)='"+getdate().substring(0,7)+"'";
+        s=database.rawQuery(sql,null);
+        //Log.d("sale",s.getCount()+sql);
+        //Toast.makeText(SaleActivity.this, s.getCount()+sql, Toast.LENGTH_SHORT).show();
+        if(s.moveToFirst()) tvmonth.setText(s.getInt(0)+"");
+        s.close();
 
         adapter = new SaleAdapter(SaleActivity.this, R.layout.saleitem, pList);
 
@@ -231,7 +245,7 @@ public class SaleActivity extends AppCompatActivity {
             cv.put("amount", String.valueOf(edamount.getText()));
             cv.put("cost", String.valueOf(edcost.getText()));
             database.insert("sale", null, cv);
-            Toast.makeText(SaleActivity.this, "添加成功！.", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(SaleActivity.this, "添加成功！.", Toast.LENGTH_SHORT).show();
 
             refreshdata();
         }

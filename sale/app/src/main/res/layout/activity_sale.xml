@@ -97,8 +97,8 @@
             android:layout_width="120dp"
             android:layout_height="50dp"
             android:layout_marginStart="4dp"
-            android:gravity="center"
             android:ems="10"
+            android:gravity="center"
             android:hint="数量"
             android:inputType="number"
             android:selectAllOnFocus="true"
@@ -111,8 +111,8 @@
             android:layout_height="50dp"
             android:layout_marginStart="4dp"
             android:ems="10"
-            android:hint="单价"
             android:gravity="center"
+            android:hint="单价"
             android:inputType="number"
             android:selectAllOnFocus="true"
             app:layout_constraintStart_toEndOf="@+id/textView3"
@@ -137,8 +137,8 @@
             android:layout_height="50dp"
             android:layout_marginEnd="16dp"
             android:ems="10"
-            android:hint="成本"
             android:gravity="center"
+            android:hint="成本"
             android:inputType="number"
             android:selectAllOnFocus="true"
             app:layout_constraintBaseline_toBaselineOf="@+id/edamount"
@@ -169,8 +169,8 @@
             android:id="@+id/view"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#000000"
             android:layout_marginTop="4dp"
+            android:background="#000000"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -201,9 +201,9 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             android:background="@color/purple_700"
-            android:textColor="@color/white"
             android:onClick="save"
             android:text="保存"
+            android:textColor="@color/white"
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -219,6 +219,49 @@
             android:textColor="@android:color/holo_blue_dark"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/image_product" />
+
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="本日毛利:"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tvToday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="TextView"
+
+            android:textColor="@android:color/holo_red_dark"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView7" />
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+
+            android:text="本月毛利:"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tvToday" />
+
+        <TextView
+            android:id="@+id/tvMonth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+
+            android:text="TextView"
+            android:textColor="@android:color/holo_red_dark"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView8" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

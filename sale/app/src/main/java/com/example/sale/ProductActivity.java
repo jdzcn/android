@@ -101,7 +101,8 @@ public class ProductActivity extends AppCompatActivity {
         }
         cursor.close();
         adapter = new ProductAdapter(ProductActivity.this, R.layout.product_item, pList);
-        adapter.notifyDataSetChanged();
+        //adapter.notifyDataSetChanged();
+
         listView.setAdapter(adapter);
     }
 
