@@ -2,9 +2,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_hide"
-        android:title="hide"
+        android:id="@+id/m_sale"
+        android:title="销售单"
         android:icon="@drawable/book"
         app:showAsAction="always"/>
-
+    <item
+        android:id="@+id/m_item"
+        android:title="商品管理"/>
+    <item
+        android:id="@+id/m_find"
+        android:title="查询"/>
+    <item
+        android:id="@+id/m_export"
+        android:title="数据导出" />
+    <item
+        android:id="@+id/m_import"
+        android:title="数据导入" />
+    <item
+        android:id="@+id/m_share"
+        android:title="数据发送" />
 </menu>

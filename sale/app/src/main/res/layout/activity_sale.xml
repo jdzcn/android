@@ -71,7 +71,7 @@
             android:id="@+id/image_product"
             android:layout_width="100dp"
             android:layout_height="96dp"
-            android:layout_marginTop="44dp"
+            android:layout_marginTop="28dp"
             android:layout_marginEnd="20dp"
             android:onClick="loadimage"
             app:layout_constraintEnd_toEndOf="parent"
@@ -88,6 +88,7 @@
             android:onClick="loadimage"
             android:text="商品名称"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView" />
 
@@ -96,10 +97,11 @@
             android:layout_width="120dp"
             android:layout_height="50dp"
             android:layout_marginStart="4dp"
-
+            android:gravity="center"
             android:ems="10"
             android:hint="数量"
             android:inputType="number"
+            android:selectAllOnFocus="true"
             app:layout_constraintStart_toEndOf="@+id/textView2"
             app:layout_constraintTop_toBottomOf="@+id/textname" />
 
@@ -110,7 +112,9 @@
             android:layout_marginStart="4dp"
             android:ems="10"
             android:hint="单价"
+            android:gravity="center"
             android:inputType="number"
+            android:selectAllOnFocus="true"
             app:layout_constraintStart_toEndOf="@+id/textView3"
             app:layout_constraintTop_toBottomOf="@+id/ednum" />
 
@@ -120,8 +124,10 @@
             android:layout_height="50dp"
             android:layout_marginStart="4dp"
             android:ems="10"
+            android:gravity="center"
             android:hint="金额"
             android:inputType="number"
+            android:selectAllOnFocus="true"
             app:layout_constraintStart_toEndOf="@+id/textView4"
             app:layout_constraintTop_toBottomOf="@+id/edprice" />
 
@@ -132,7 +138,9 @@
             android:layout_marginEnd="16dp"
             android:ems="10"
             android:hint="成本"
+            android:gravity="center"
             android:inputType="number"
+            android:selectAllOnFocus="true"
             app:layout_constraintBaseline_toBaselineOf="@+id/edamount"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -192,12 +200,25 @@
             android:layout_height="46dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
+            android:background="@color/purple_700"
+            android:textColor="@color/white"
             android:onClick="save"
             android:text="保存"
+
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/edcost"
             app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            android:text="点击选择商品"
+            android:textColor="@android:color/holo_blue_dark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/image_product" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

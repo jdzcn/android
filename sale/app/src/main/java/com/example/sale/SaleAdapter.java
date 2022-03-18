@@ -3,6 +3,7 @@ package com.example.sale;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,9 +49,15 @@ public class SaleAdapter extends ArrayAdapter<Sale> {
         viewHolder.tvname.setText(p.name);
         viewHolder.tvnum.setText(p.number+"");
         viewHolder.tvprice.setText("x"+p.price);
-        viewHolder.tvamount.setText(""+p.amount);
-        viewHolder.tvcost.setText(p.cost+"");
-        viewHolder.tvprofit.setText((p.amount-p.cost)+"");
+        int a=p.amount;
+        int c=p.cost;
+        viewHolder.tvamount.setText(""+a);
+        viewHolder.tvcost.setText(c+"");
+
+        int profit=p.amount-p.cost;
+
+        //if (c.compareto(a)) viewHolder.tvprofit.setTextColor(Color.RED);
+        viewHolder.tvprofit.setText(profit+"");
         byte[] d = p.image;
         Bitmap b1 = BitmapFactory.decodeByteArray(d, 0, d.length);
         viewHolder.ivprod.setImageBitmap(b1);

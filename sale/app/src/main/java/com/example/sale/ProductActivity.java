@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -34,10 +35,22 @@ public class ProductActivity extends AppCompatActivity {
     EditText editname,editprice,editcost;
     ProductAdapter adapter;
     ListView listView;
+    String select;
+    private View mViewGroup;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product);
+
+        Intent intent=getIntent();
+        select=intent.getStringExtra("select");
+
+        mViewGroup = findViewById(R.id.product);
+        Log.d("product",select);
+
+        if(select.equals("yes")) mViewGroup.setVisibility(View.GONE);
+        else mViewGroup.setVisibility(View.VISIBLE);
 
         Toolbar myChildToolbar =
                 (Toolbar) findViewById(R.id.my_toolbar);

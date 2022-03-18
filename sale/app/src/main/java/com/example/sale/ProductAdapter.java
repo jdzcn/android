@@ -32,17 +32,19 @@ public class ProductAdapter extends ArrayAdapter<Product> {
             viewHolder = new ViewHolder();
             viewHolder.pImage = (ImageView) view.findViewById (R.id.image);
             viewHolder.pName = (TextView) view.findViewById (R.id.name);
-            viewHolder.pPrice = (TextView) view.findViewById (R.id.price);
-            viewHolder.pCost = (TextView) view.findViewById (R.id.cost);
+            //viewHolder.pPrice = (TextView) view.findViewById (R.id.price);
+            //viewHolder.pCost = (TextView) view.findViewById (R.id.cost);
+            //viewHolder.pid = (TextView) view.findViewById (R.id.pid);
             view.setTag(viewHolder); // 将ViewHolder存储在View中
         } else {
             view = convertView;
             viewHolder = (ViewHolder) view.getTag(); // 重新获取ViewHolder
         }
         //viewHolder.pImage.setImageResource(p.getImageId());
-        viewHolder.pName.setText(p.getName());
-        viewHolder.pPrice.setText(p.getPrice()+"");
-        viewHolder.pCost.setText(p.getCost()+"");
+        viewHolder.pName.setText(p.getName()+"("+p.getPid()+")");
+        //viewHolder.pid.setText("编号:"+p.getPid());
+        //viewHolder.pPrice.setText("单价:"+p.getPrice());
+        // viewHolder.pCost.setText("成本:"+p.getCost());
 
         byte[] d = p.getImage();
         Bitmap b1 = BitmapFactory.decodeByteArray(d, 0, d.length);
@@ -54,8 +56,7 @@ public class ProductAdapter extends ArrayAdapter<Product> {
     class ViewHolder {
 
         ImageView pImage;
-        TextView pPrice;
-        TextView pCost;
+        //TextView pid,pPrice,pCost;
         TextView pName;
 
     }

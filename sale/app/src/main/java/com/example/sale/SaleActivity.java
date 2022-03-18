@@ -1,16 +1,24 @@
 package com.example.sale;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.FileProvider;
 
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +33,10 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,7 +53,7 @@ public class SaleActivity extends AppCompatActivity {
     EditText ednum,edprice,edamount,edcost;
     SaleAdapter adapter;
     ListView listView;
-    int sel=0;
+    int sel=0,prodcost;
     TextView tvname,tvdate;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +76,68 @@ public class SaleActivity extends AppCompatActivity {
         edcost = (EditText) findViewById(R.id.edcost);
         listView = (ListView) findViewById(R.id.listview);
         refreshdata();
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        ednum.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                Sale fruit = pList.get(position);
-                Toast.makeText(SaleActivity.this, fruit.id + "", Toast.LENGTH_SHORT).show();
+            public void onTextChanged(CharSequence s, int start, int before, int count){}
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(TextUtils.isEmpty(ednum.getText())||TextUtils.isEmpty(edprice.getText())) return;
+                int q = Integer.parseInt(ednum.getText().toString());
+                int p=Integer.parseInt(edprice.getText().toString());
+                //int c=Integer.parseInt(ed_cost.getText().toString());
+                edamount.setText(q*p+"");
+                edcost.setText(q*prodcost+"");
+            }
+        });
+
+        edprice.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count){}
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(TextUtils.isEmpty(ednum.getText())||TextUtils.isEmpty(edprice.getText())) return;
+                int q = Integer.parseInt(ednum.getText().toString());
+                int p=Integer.parseInt(edprice.getText().toString());
+                edamount.setText(q*p+"");
+            }
+        });
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                final String str="DELETE FROM sale where id="+pList.get(i).id;
+                //Toast.makeText(MainActivity.this,"你选择了"+tv.getText().toString(),Toast.LENGTH_LONG).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(SaleActivity.this);
+                builder.setIcon(R.drawable.ic_launcher);
+                builder.setTitle("警告");
+                builder.setMessage("确定要删除这条记录吗?\n"+str);
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //点击确定按钮之后的回调
+
+                        database.execSQL(str);
+                        Toast.makeText(SaleActivity.this, "删除成功!", Toast.LENGTH_SHORT).show();
+                        refreshdata();
+                    }
+                });
+
+
+                builder.setNeutralButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                return true;
             }
         });
     }
@@ -110,7 +178,7 @@ public class SaleActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_hide:
+            case R.id.m_sale:
                 if (viewGroupIsVisible) {
                     mViewGroup.setVisibility(View.GONE);
                 } else {
@@ -119,14 +187,31 @@ public class SaleActivity extends AppCompatActivity {
 
                 viewGroupIsVisible = !viewGroupIsVisible;
                 return true;
+            case R.id.m_export:
+
+                copyfile((Environment.getDataDirectory().getAbsolutePath() + "/data/" + this.getPackageName() + "/databases/sale.db"),(Environment.getExternalStorageDirectory().getAbsolutePath() + "/sale.db"),true);
+
+                return true;
+            case R.id.m_import:
+
+                copyfile((Environment.getExternalStorageDirectory().getAbsolutePath() + "/sale.db"),(Environment.getDataDirectory().getAbsolutePath() + "/data/" +getPackageName() + "/databases/sale.db"),false);
 
 
+                return true;
+            case R.id.m_item:
+                Intent intent = new Intent(SaleActivity.this, ProductActivity.class);
+                intent.putExtra("select","no");
+                startActivityForResult(intent,1);
+                return true;
+            case R.id.m_share:
+                return true;
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
 
         }
+
     }
 
 
@@ -155,6 +240,7 @@ public class SaleActivity extends AppCompatActivity {
     public void  loadimage(View view) {
 
         Intent intent = new Intent(SaleActivity.this, ProductActivity.class);
+        intent.putExtra("select","yes");
         startActivityForResult(intent,1);
         
     }
@@ -176,6 +262,7 @@ public class SaleActivity extends AppCompatActivity {
                         edprice.setText(c.getInt(1) + "");
                         edamount.setText(c.getInt(1)+"");
                         edcost.setText(c.getInt(2)+"");
+                        prodcost=c.getInt(2);
                         byte[] d = c.getBlob(3);
                         Bitmap b1 = BitmapFactory.decodeByteArray(d, 0, d.length);
                         img.setImageBitmap(b1);
@@ -207,5 +294,68 @@ public class SaleActivity extends AppCompatActivity {
 
         //ImageView yourImageView = (ImageView) findViewById(R.id.yourImageView);
         //Bitmap bitmap = ((BitmapDrawable)yourImageView.getDrawable()).getBitmap();
+    }
+
+    public void copyfile(final String inputstr,final String outputstr,final boolean issend)	{
+        AlertDialog.Builder builder = new AlertDialog.Builder(SaleActivity.this);
+        builder.setIcon(R.drawable.ic_launcher);
+        builder.setTitle("详情");
+        builder.setMessage("源文件:"+inputstr+"\n目标文件:"+outputstr+"\n确定执行操作吗?");
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //点击确定按钮之后的回调
+                File dbFile = new File(inputstr);
+                if(!dbFile.exists())	{
+                    Toast.makeText(SaleActivity.this, "文件不存在!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                FileInputStream fis = null;
+                FileOutputStream fos = null;
+                try {
+                    //文件复制到sd卡中
+                    fis = new FileInputStream(dbFile);
+
+                    fos = new FileOutputStream(outputstr);
+                    int len = 0;
+                    byte[] buffer = new byte[2048];
+                    while (-1 != (len = fis.read(buffer))) {
+                        fos.write(buffer, 0, len);
+                    }
+                    fos.flush();
+
+                    Toast.makeText(SaleActivity.this, issend?"备份成功!":"恢复成功!", Toast.LENGTH_SHORT).show();
+                    if (issend) {}
+                    else {
+                        final Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        if (fos != null) fos.close();
+                        if (fis != null) fis.close();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+            }
+        });
+
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //点击取消按钮之后的回调
+            }
+        });
+
+        AlertDialog dialog1 = builder.create();
+        dialog1.show();
+
     }
 }
