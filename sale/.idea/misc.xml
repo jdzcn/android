@@ -6,6 +6,9 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_product.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_sale.xml" value="0.4233409610983982" />
+        <entry key="app/src/main/res/layout/finddlg.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/finditem.xml" value="0.75" />
+        <entry key="app/src/main/res/layout/findlayout.xml" value="0.5" />
         <entry key="app/src/main/res/layout/product_item.xml" value="0.5" />
         <entry key="app/src/main/res/layout/saleitem.xml" value="0.5" />
         <entry key="app/src/main/res/menu/main.xml" value="0.22" />
