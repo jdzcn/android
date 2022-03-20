@@ -101,6 +101,7 @@
             android:ems="10"
             android:hint="商品名称"
             android:inputType="textPersonName"
+            android:selectAllOnFocus="true"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/edit_id" />
 
@@ -113,6 +114,7 @@
             android:ems="10"
             android:hint="单价"
             android:inputType="number"
+            android:selectAllOnFocus="true"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/edit_Name" />
 
@@ -125,6 +127,7 @@
             android:ems="10"
             android:hint="成本"
             android:inputType="number"
+            android:selectAllOnFocus="true"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/edit_Price" />
 
