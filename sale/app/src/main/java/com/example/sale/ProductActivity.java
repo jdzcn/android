@@ -3,6 +3,10 @@ package com.example.sale;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.ContentValues;
 import android.content.Intent;
@@ -19,6 +23,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -30,14 +35,16 @@ import java.util.List;
 public class ProductActivity extends AppCompatActivity {
     public saleHelper db;
     public SQLiteDatabase database;
-    private List<Product> pList = new ArrayList<Product>();
+    private static List<Product> pList = new ArrayList<Product>();
     int SELECT_PICTURE = 200;
     ImageView img;
     Button btn;
     EditText editid,editname,editprice,editcost;
     ProductAdapter adapter;
-    ListView listView;
-    String select;
+    GridView listView;
+    //RecyclerViewAdapter adapter;
+    //RecyclerView rview;
+    static String select;
     private View mViewGroup;
 
     @Override
@@ -69,17 +76,19 @@ public class ProductActivity extends AppCompatActivity {
 
         db=new saleHelper(this);
         database=db.getWritableDatabase();
+
         btn=(Button)findViewById(R.id.button);
         img=(ImageView)findViewById(R.id.image_product);
         editid=(EditText)findViewById(R.id.edit_id);
         editname=(EditText)findViewById(R.id.edit_Name);
         editprice=(EditText)findViewById(R.id.edit_Price);
         editcost=(EditText)findViewById(R.id.edit_Cost);
-        listView = (ListView) findViewById(R.id.listview);
+        listView = (GridView)  findViewById(R.id.listview);
+        //rview=(RecyclerView)findViewById(R.id.rview);
         refreshdata();
 
 
-        //listView.setAdapter(adapter);
+        listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
@@ -104,7 +113,11 @@ public class ProductActivity extends AppCompatActivity {
                 }
             }
         });
+
+
     }
+
+
 
     public void refreshdata() {
         Cursor cursor=database.rawQuery("select * from product order by pid desc", null);
@@ -118,8 +131,6 @@ public class ProductActivity extends AppCompatActivity {
         }
         cursor.close();
         adapter = new ProductAdapter(ProductActivity.this, R.layout.product_item, pList);
-        //adapter.notifyDataSetChanged();
-
         listView.setAdapter(adapter);
     }
 
