@@ -17,6 +17,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -161,6 +162,14 @@ public class ProductActivity extends AppCompatActivity {
         imageChooser();
 
     }
+
+    public void  takeimage(View view) {
+
+        Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(takePicture, 0);
+
+    }
+
     void imageChooser() {
 
         // create an instance of the
@@ -171,7 +180,7 @@ public class ProductActivity extends AppCompatActivity {
 
         // pass the constant to compare it
         // with the returned requestCode
-        startActivityForResult(Intent.createChooser(i, "Select Picture"), SELECT_PICTURE);
+        startActivityForResult(Intent.createChooser(i, "Select Picture"), 1);
     }
 
     // this function is triggered when user
@@ -183,6 +192,7 @@ public class ProductActivity extends AppCompatActivity {
 
             // compare the resultCode with the
             // SELECT_PICTURE constant
+            /*
             if (requestCode == SELECT_PICTURE) {
                 // Get the url of the image from data
                 Uri selectedImageUri = data.getData();
@@ -191,6 +201,22 @@ public class ProductActivity extends AppCompatActivity {
 
                     img.setImageURI(selectedImageUri);
                 }
+
+            }
+
+             */
+            switch(requestCode) {
+                case 0:
+                        //Uri selectedImage = data.getData();
+                        //img.setImageURI(selectedImage);
+                    Bitmap thumbnail = data.getParcelableExtra("data");
+                    img.setImageBitmap(thumbnail);
+
+                    break;
+                case 1:
+                        Uri selimg = data.getData();
+                        img.setImageURI(selimg);
+                    break;
             }
         }
     }
