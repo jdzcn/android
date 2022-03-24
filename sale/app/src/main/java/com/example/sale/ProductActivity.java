@@ -137,7 +137,7 @@ public class ProductActivity extends AppCompatActivity {
 
     public void  save(View view) {
         if(TextUtils.isEmpty(editname.getText())) return;
-        byte[] imgdata=getByteArrayFromImageView(img);
+        byte[] imgdata=mylib.getByteArrayFromImageView(img);
         ContentValues cv = new ContentValues();
 
         cv.put("img", imgdata);
@@ -221,26 +221,5 @@ public class ProductActivity extends AppCompatActivity {
         }
     }
 
-    public static  byte[] getByteArrayFromImageView(ImageView imageView)
-    {
-        BitmapDrawable bitmapDrawable = ((BitmapDrawable) imageView.getDrawable());
-        Bitmap bitmap;
-        if(bitmapDrawable==null){
-            imageView.buildDrawingCache();
-            bitmap = imageView.getDrawingCache();
-            imageView.buildDrawingCache(false);
-        }else
-        {
-            bitmap = bitmapDrawable .getBitmap();
-        }
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-        return stream.toByteArray();
 
-        //Bitmap bitmap;
-        //bitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
-
-        //ImageView yourImageView = (ImageView) findViewById(R.id.yourImageView);
-        //Bitmap bitmap = ((BitmapDrawable)yourImageView.getDrawable()).getBitmap();
-    }
 }

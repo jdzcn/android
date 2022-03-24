@@ -284,12 +284,12 @@ public class SaleActivity extends AppCompatActivity {
                 return true;
             case R.id.m_export:
 
-                copyfile((Environment.getDataDirectory().getAbsolutePath() + "/data/" + this.getPackageName() + "/databases/sale.db"),(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download/sale.db"),true);
+                copyfile((mylib.getDatabaseDir() + "sale.db"),(mylib.getDownloadDir() + "sale.db"),true);
 
                 return true;
             case R.id.m_import:
 
-                copyfile((Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download/sale.db"),(Environment.getDataDirectory().getAbsolutePath() + "/data/" +getPackageName() + "/databases/sale.db"),false);
+                copyfile((mylib.getDownloadDir()+ "sale.db"),(mylib.getDatabaseDir()+ "sale.db"),false);
 
 
                 return true;
@@ -352,7 +352,7 @@ public class SaleActivity extends AppCompatActivity {
 
                     Cursor c=database.rawQuery(sql,null);
                     if(c.moveToFirst()) {
-                        tvname.setText(c.getString(0)+"(id:"+sel+")");
+                        tvname.setText(c.getString(0));
 
                         ednum.setText(c.getCount() + "");
                         edprice.setText(c.getInt(1) + "");
@@ -369,28 +369,7 @@ public class SaleActivity extends AppCompatActivity {
         }
     }
 
-    public static  byte[] getByteArrayFromImageView(ImageView imageView)
-    {
-        BitmapDrawable bitmapDrawable = ((BitmapDrawable) imageView.getDrawable());
-        Bitmap bitmap;
-        if(bitmapDrawable==null){
-            imageView.buildDrawingCache();
-            bitmap = imageView.getDrawingCache();
-            imageView.buildDrawingCache(false);
-        }else
-        {
-            bitmap = bitmapDrawable .getBitmap();
-        }
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-        return stream.toByteArray();
 
-        //Bitmap bitmap;
-        //bitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
-
-        //ImageView yourImageView = (ImageView) findViewById(R.id.yourImageView);
-        //Bitmap bitmap = ((BitmapDrawable)yourImageView.getDrawable()).getBitmap();
-    }
 
     public void copyfile(final String inputstr,final String outputstr,final boolean issend)	{
         AlertDialog.Builder builder = new AlertDialog.Builder(SaleActivity.this);
