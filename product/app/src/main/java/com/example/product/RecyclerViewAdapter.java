@@ -22,6 +22,8 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
 import java.io.File;
 import java.util.List;
 
@@ -62,8 +64,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         String d = p.images;
         holder.name.setText(t);
         String path=common.getDownloadDir()+"thumb/"+d;
-        Log.d("recyc",path);
         holder.imgView.setImageBitmap(BitmapFactory.decodeFile(path));
+        //Picasso.get().load("http://172.96.193.223/thumbnail/"+d).placeholder(R.drawable.ic_launcher).into(holder.imgView);
         //holder.images.setText(d);
         //File file=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+"/"+d);
         //holder.imgView.setImageURI(Uri.fromFile(file));

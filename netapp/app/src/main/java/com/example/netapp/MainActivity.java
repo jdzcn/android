@@ -3,14 +3,21 @@ package com.example.netapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -67,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
                         response.append(line);
                     }
                     showResponse(response.toString());
+                    parseXMLWithPull(response.toString());
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -103,13 +111,13 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     OkHttpClient client = new OkHttpClient();
                     Request request = new Request.Builder()
-                            .url("http://ws.webxml.com.cn/WebServices/WeatherWS.asmx/getWeather?theCityCode=2085&theUserID=")
+                            .url("https://www.yiketianqi.com/free/day?appid=41633843&appsecret=If8zSUqK&unescape=1")
                             .build();
                     Response response = client.newCall(request).execute();
                     String responseData = response.body().string();
                     showResponse(responseData);
                     //parseJSONWithGSON(responseData);
-//                    parseJSONWithJSONObject(responseData);
+                    parseJSONWithJSONObject(responseData);
 //                    parseXMLWithSAX(responseData);
 //                    parseXMLWithPull(responseData);
 //                    showResponse(responseData);
@@ -119,5 +127,81 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
     }
+
+    private void parseJSONWithJSONObject(String jsonData) {
+        try {
+
+                JSONObject jsonObject = new JSONObject(jsonData);
+                String cityid = jsonObject.getString("cityid");
+                String city = jsonObject.getString("city");
+                String update_time = jsonObject.getString("update_time");
+                String wea = jsonObject.getString("wea");
+                String wea_img = jsonObject.getString("wea_img");
+                String tem = jsonObject.getString("tem");
+                String win = jsonObject.getString("win");
+                String air = jsonObject.getString("air");
+                String win_meter = jsonObject.getString("win_meter");
+                String win_speed = jsonObject.getString("win_speed");
+                String tem_night = jsonObject.getString("tem_night");
+                String tem_day = jsonObject.getString("tem_day");
+
+                Log.d("MainActivity", "cityid is " + cityid);
+                Log.d("MainActivity", "city is " + city);
+                Log.d("MainActivity", "update_time is " + update_time);
+                Log.d("MainActivity", "wea is " + wea);
+                Log.d("MainActivity", "wea_img is " + wea_img);
+                Log.d("MainActivity", "tem is " + tem);
+                Log.d("MainActivity", "tem_day is " + tem_day);
+                Log.d("MainActivity", "tem_night is " + tem_night);
+                Log.d("MainActivity", "win is " + win);
+                Log.d("MainActivity", "win_speed is " + win_speed);
+                Log.d("MainActivity", "win_meter is " + win_meter);
+                Log.d("MainActivity", "air is " + air);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void parseXMLWithPull(String xmlData) {
+        try {
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            XmlPullParser xmlPullParser = factory.newPullParser();
+            xmlPullParser.setInput(new StringReader(xmlData));
+            int eventType = xmlPullParser.getEventType();
+            String id = "";
+            String name = "";
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                String nodeName = xmlPullParser.getName();
+                switch (eventType) {
+                    // 开始解析某个结点
+                    case XmlPullParser.START_TAG: {
+                        if ("id".equals(nodeName)) {
+                            id = xmlPullParser.nextText();
+                        } else if ("name".equals(nodeName)) {
+                            name = xmlPullParser.nextText();
+                        }
+                        break;
+                    }
+                    // 完成解析某个结点
+                    case XmlPullParser.END_TAG: {
+                        if ("DATA_RECORD".equals(nodeName)) {
+                            Log.d("MainActivity", "id is " + id);
+                            Log.d("MainActivity", "name is " + name);
+
+                        }
+                        break;
+                    }
+                    default:
+                        break;
+                }
+                eventType = xmlPullParser.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }
