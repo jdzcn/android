@@ -1,7 +1,14 @@
 package com.example.weather;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,17 +28,22 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity {
 
     String cityid,city,update_time,wea,wea_img,tem,tem_day,tem_night,win,win_speed,win_meter,air;
-    TextView tvcity,tvtime,tvwea,tvtem,tvtem_day,tvtem_night,tvwin,tvwin_speed,tvwin_meter,tvair;
+    TextView tvcity,tvtime,tvwea,tvtem,tvtemday,tvtem_night,tvwin,tvwin_speed,tvwin_meter,tvair;
     ImageView imageView;
+    String CHANNEL_ID="7831";
+    int notificationId=7831;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        createNotificationChannel();
+
         tvcity=(TextView) findViewById(R.id.tvcity);
         tvtime=(TextView) findViewById(R.id.tvtime);
         tvwea=(TextView) findViewById(R.id.tvwea);
         tvtem=(TextView) findViewById(R.id.tvtem);
+        tvtemday=(TextView) findViewById(R.id.tvtemday);
         tvwin=(TextView) findViewById(R.id.tvwin);
         tvwin_meter=(TextView) findViewById(R.id.tvwin_meter);
         tvwin_speed=(TextView) findViewById(R.id.tvwin_speed);
@@ -46,6 +58,23 @@ public class MainActivity extends AppCompatActivity {
         });
         sendRequestWithHttpURLConnection();
     }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
 
     private void sendRequestWithHttpURLConnection() {
         // 开启线程来发起网络请求
@@ -71,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
 
                     parseJSONWithJSONObject(response.toString());
                     showResponse(response.toString());
+                    //mynotify();
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -89,6 +120,32 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
+    public void notifiy(View v) {
+        mynotify();
+    }
+
+    public void mynotify() {
+        // Create an explicit intent for an Activity in your app
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.qing)
+                .setContentTitle(city+"天气")
+                .setContentText(wea+" "+tem+"℃ "+tem_night+"-"+tem_day+"℃ "+win+win_speed+" "+" 空气质量:"+air)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                // Set the intent that will fire when the user taps the notification
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+        // notificationId is a unique int for each notification that you must define
+        notificationManager.notify(notificationId, builder.build());
+
+    }
+
     private void showResponse(final String response) {
         runOnUiThread(new Runnable() {
             @Override
@@ -98,11 +155,15 @@ public class MainActivity extends AppCompatActivity {
                 tvcity.setText(city);
                 tvtime.setText(update_time);
                 tvwea.setText(wea);
-                tvtem.setText(tem);
+                tvtem.setText(tem+"℃");
+                tvtemday.setText(tem_night+"-"+tem_day+"℃");
+
                 tvwin.setText(win);
                 tvwin_meter.setText(win_meter);
                 tvwin_speed.setText(win_speed);
                 tvair.setText(air);
+
+
                 switch (wea_img) {
                     case "yu":
                         imageView.setImageResource(R.drawable.yu);
@@ -134,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
                     default:
                         break;
                 }
-
+                
             }
         });
     }

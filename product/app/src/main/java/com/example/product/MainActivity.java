@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         database=db.getReadableDatabase();
 
 
+
         Cursor cursor=database.rawQuery("select id,name,images from product limit 20", null);
        //database.execSQL("insert into product (name,images,cid) values("+"'jiuju','image1.jpg'"+",1)");
 
@@ -74,12 +76,20 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //playmp3();
                 BottomSheetDialog dialog = new BottomSheetDialog(MainActivity.this);
                 dialog.setContentView(R.layout.bottom);
                 dialog.show();
-
+                playmp3();
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Log.e("MainActivity","MainActicity_onStart");
     }
 
     @Override
@@ -96,5 +106,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    public void playmp3() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                MediaPlayer.create(MainActivity.this,R.raw.chen).start();
+            }
+        }).start();
+    }
 }

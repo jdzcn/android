@@ -8,6 +8,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.xmlpull.v1.XmlPullParser;
@@ -20,6 +23,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -60,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
                 HttpURLConnection connection = null;
                 BufferedReader reader = null;
                 try {
-                    URL url = new URL("http://172.96.193.223/product.xml");
+                    URL url = new URL("http://172.96.193.223/product.php");
                     connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
                     connection.setConnectTimeout(8000);
@@ -74,7 +78,8 @@ public class MainActivity extends AppCompatActivity {
                         response.append(line);
                     }
                     showResponse(response.toString());
-                    parseXMLWithPull(response.toString());
+                    parseJSONWithGSON(response.toString());
+                    //parseXMLWithPull(response.toString());
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -127,6 +132,17 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
     }
+
+    private void parseJSONWithGSON(String jsonData) {
+        Gson gson = new Gson();
+        List<Product> appList = gson.fromJson(jsonData, new TypeToken<List<Product>>() {}.getType());
+        for (Product app : appList) {
+            Log.d("MainActivity", "id is " + app.id);
+            Log.d("MainActivity", "name is " + app.name);
+            //Log.d("MainActivity", "version is " + app.getVersion());
+        }
+    }
+
 
     private void parseJSONWithJSONObject(String jsonData) {
         try {
