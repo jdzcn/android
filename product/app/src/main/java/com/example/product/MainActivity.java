@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                MediaPlayer.create(MainActivity.this,R.raw.chen).start();
+                //MediaPlayer.create(MainActivity.this,R.raw.chen).start();
             }
         }).start();
     }

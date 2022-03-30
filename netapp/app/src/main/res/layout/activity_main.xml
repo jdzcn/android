@@ -9,20 +9,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="product" />
-    <Button
-        android:id="@+id/weather"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="weather" />
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-
-        <TextView
-            android:id="@+id/response_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </ScrollView>
+        android:layout_height="match_parent"/>
 
 </LinearLayout>
 
