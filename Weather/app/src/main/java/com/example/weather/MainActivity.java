@@ -50,14 +50,35 @@ public class MainActivity extends AppCompatActivity {
         tvair=(TextView) findViewById(R.id.tvair);
         imageView=(ImageView)findViewById(R.id.imgwea) ;
         Button button=(Button) findViewById(R.id.button);
+        Button btnstart=(Button) findViewById(R.id.btnstart);
+        Button btnend=(Button) findViewById(R.id.btnend);
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 sendRequestWithHttpURLConnection();
             }
         });
+
         sendRequestWithHttpURLConnection();
     }
+
+
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btnstart:
+                Intent i = new Intent(this, MyService.class);
+                startService(i);
+                break;
+            case R.id.btnend:
+                Intent stopi = new Intent(this, MyService.class);
+                stopService(stopi);
+                break;
+            default:
+                break;
+        }
+    }
+
 
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
