@@ -14,7 +14,7 @@
         android:layout_margin="16dp"
         android:layout_marginEnd="16dp"
         android:contentDescription="@string/add"
-        android:src="@drawable/ic_xuan"
+        android:src="@drawable/yes"
         app:layout_constraintBottom_toBottomOf="@+id/rview"
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="MissingConstraints" />

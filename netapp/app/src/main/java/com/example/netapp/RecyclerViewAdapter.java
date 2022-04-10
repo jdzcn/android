@@ -32,16 +32,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     Context c;
     public class MyViewHolder extends RecyclerView.ViewHolder{
         TextView name;
-        Button btnurl,btnmail,btnnote;
+
         ImageView imgView;
 
         public MyViewHolder(View v){
             super(v);
             name = v.findViewById(R.id.product_name);
-            btnurl=v.findViewById(R.id.url);
+
             imgView=v.findViewById(R.id.pimage);
-            btnmail=v.findViewById(R.id.mail);
-            btnnote=v.findViewById(R.id.note);
+
         }
 
     }
@@ -86,6 +85,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 Toast.makeText(view.getContext(),"you clicked view:"+p.name+"(id:"+p.id+")",Toast.LENGTH_LONG).show();
             }
         });
+        /*
         holder.btnurl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -118,8 +118,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
             }
         });
+
+         */
         return holder;
     }
+    /*
     public void searchWeb(String query) {
         Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
         intent.putExtra(SearchManager.QUERY, query);
@@ -141,7 +144,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void composeEmail(String[] addresses, String subject, Uri attachment) {
 
         Intent intent = new Intent(Intent.ACTION_SENDTO);
-        //intent.setType("*/*");
+        //intent.setType("/*");
         intent.setData(Uri.parse("mailto:"));
         intent.putExtra(Intent.EXTRA_EMAIL, addresses);
         intent.putExtra(Intent.EXTRA_SUBJECT, subject);
@@ -154,7 +157,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void send(String[] addresses, String subject, Uri attachment) {
 
         Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("*/*");
+        //intent.setType("/*");
         //intent.setData(Uri.parse("mailto:"));
         intent.putExtra(Intent.EXTRA_EMAIL, addresses);
         intent.putExtra(Intent.EXTRA_SUBJECT, subject);
@@ -164,5 +167,5 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             c.startActivity(intent);
         }
     }
-
+*/
 }
