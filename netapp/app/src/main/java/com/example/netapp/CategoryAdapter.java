@@ -1,10 +1,14 @@
 package com.example.netapp;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,21 +20,21 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyViewHolder>{
-    private List<Category> cList;
+    private List<group_category> cList;
     Context c;
     public class MyViewHolder extends RecyclerView.ViewHolder{
         TextView sname;
-
+        LinearLayout row_linearlayout;
 
         public MyViewHolder(View v){
             super(v);
             sname = v.findViewById(R.id.tv_sname);
-
+            row_linearlayout=(LinearLayout)itemView.findViewById(R.id.line);
         }
 
     }
 
-    public CategoryAdapter(Context c,List<Category> pl){
+    public CategoryAdapter(Context c,List<group_category> pl){
         this.cList = pl;
         this.c=c;
     }
@@ -42,8 +46,13 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
 
     @Override
     public void onBindViewHolder(final CategoryAdapter.MyViewHolder holder, final int position) {
-        Category p=cList.get(position);
-        holder.sname.setText(p.sname);
+        group_category p=cList.get(position);
+        if(p.id==0) {
+            holder.row_linearlayout.setBackgroundColor(Color.parseColor("#009688"));
+            holder.sname.setGravity(Gravity.LEFT);
+            holder.sname.setTextColor(Color.parseColor("#FFFFFF"));
+        }
+        holder.sname.setText(p.name);
     }
 
     @Override
@@ -54,11 +63,13 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
             @Override
             public void onClick(View view) {
                 int position=holder.getAdapterPosition();
-                Category p=cList.get(position);
+                group_category p=cList.get(position);
                 //openWebPage("http://172.96.193.223/images/"+p.images);
                 //Toast.makeText(view.getContext(),"you clicked view:"+p.sname+"(id:"+p.id+")",Toast.LENGTH_LONG).show();
-                ((MainActivity)c).sendRequestWithHttpURLConnection("?cid="+p.id);
-                ((MainActivity)c).mDrawerLayout.closeDrawer(GravityCompat.START);
+                if(p.id!=0) {
+                    ((MainActivity) c).sendRequestWithHttpURLConnection("?cid=" + p.id);
+                    ((MainActivity) c).mDrawerLayout.closeDrawer(GravityCompat.START);
+                }
             }
         });
 

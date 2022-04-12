@@ -46,6 +46,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
@@ -55,7 +56,7 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
     public static String SERVER;
     public DrawerLayout mDrawerLayout;
-
+    List<group_category> glist=new ArrayList<>();
     List<Category> clist;
     RecyclerViewAdapter adapter;
     RecyclerView rview,cview;
@@ -244,14 +245,28 @@ public class MainActivity extends AppCompatActivity {
                 // 在这里进行UI操作，将结果显示到界面上
                 Gson gson = new Gson();
                 clist = gson.fromJson(response, new TypeToken<List<Category>>() {}.getType());
+
                 int l=clist.size();
-                String strs[]=new String[l];
-                for(int i=0;i<l;i++)
-                    strs[i]=clist.get(i).sname;
+                String cname="";
+                for(int i=0;i<l;i++) {
+                    Category c=clist.get(i);
+                    group_category item=new group_category();
+                    group_category group=new group_category();
+                    if(!c.cname.equals(cname)) {
+                        group.name=c.cname+"类";
+                        group.id=0;
+                        glist.add(group);
+                    }
+                    item.name=c.sname;
+                    item.id=c.id;
+                    glist.add(item);
+                    cname=c.cname;
+                }
+
                 //创建ArrayAdapter
                 //cadapter = new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_list_item_1,strs);
 
-                cadapter=new CategoryAdapter(MainActivity.this,clist);
+                cadapter=new CategoryAdapter(MainActivity.this,glist);
                 cview.setAdapter(cadapter);
             }
         });
