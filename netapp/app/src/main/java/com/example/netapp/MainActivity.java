@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -52,13 +53,13 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
-    public static String SERVER="http://172.96.193.223/";
-    private DrawerLayout mDrawerLayout;
-    ArrayAdapter<String> cadapter;
+    public static String SERVER;
+    public DrawerLayout mDrawerLayout;
+
     List<Category> clist;
     RecyclerViewAdapter adapter;
-    RecyclerView rview;
-    ListView listView;
+    RecyclerView rview,cview;
+    CategoryAdapter cadapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,22 +84,40 @@ public class MainActivity extends AppCompatActivity {
         });
 
         rview=(RecyclerView)findViewById(R.id.rview);
-        listView=(ListView)findViewById(R.id.listview);
+        cview=(RecyclerView)findViewById(R.id.cview);
+        /*
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(MainActivity.this,"you click"+clist.get(i).id,Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this,"you click"+clist.get(i).id,Toast.LENGTH_SHORT).show();
                 sendRequestWithHttpURLConnection("?cid="+clist.get(i).id);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
             }
         });
+        */
+        LinearLayoutManager categorylayout=new LinearLayoutManager(this);
+        cview.setLayoutManager(categorylayout);
+        cview.addItemDecoration(new DividerItemDecoration(rview.getContext(), DividerItemDecoration.VERTICAL));
+
         GridLayoutManager layoutManager=new GridLayoutManager(this,2 );
         //layoutManager.setOrientation(layoutManager.HORIZONTAL);
         rview.setLayoutManager(layoutManager);
-        //rview.addItemDecoration(new DividerItemDecoration(rview.getContext(), DividerItemDecoration.VERTICAL));
+
+        SharedPreferences sp=getSharedPreferences("data",MODE_PRIVATE);
+        SERVER=sp.getString("server","http://172.96.193.223/");
+
         get_category();
         sendRequestWithHttpURLConnection("");
 
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        SharedPreferences.Editor editor = getSharedPreferences("data", 0).edit();
+        editor.putString("server",SERVER);
+        editor.commit();
     }
 
     @Override
@@ -126,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String t=editText.getText().toString();
-                                sendRequestWithHttpURLConnection("?key="+t);
+                                if(t.length()>0) sendRequestWithHttpURLConnection("?key="+t);
                             }
                         }).show();
                 break;
@@ -151,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private void sendRequestWithHttpURLConnection(String str ) {
+    public void sendRequestWithHttpURLConnection(String str ) {
         // 开启线程来发起网络请求
         new Thread(new Runnable() {
             @Override
@@ -230,11 +249,10 @@ public class MainActivity extends AppCompatActivity {
                 for(int i=0;i<l;i++)
                     strs[i]=clist.get(i).sname;
                 //创建ArrayAdapter
-                cadapter = new ArrayAdapter<String>
-                        (MainActivity.this,android.R.layout.simple_list_item_1,strs);
+                //cadapter = new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_list_item_1,strs);
 
-
-                listView.setAdapter(cadapter);
+                cadapter=new CategoryAdapter(MainActivity.this,clist);
+                cview.setAdapter(cadapter);
             }
         });
     }
