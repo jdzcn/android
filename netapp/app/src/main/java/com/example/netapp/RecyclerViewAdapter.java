@@ -7,12 +7,15 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -23,8 +26,11 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder>{
@@ -32,15 +38,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     Context c;
     public class MyViewHolder extends RecyclerView.ViewHolder{
         TextView name;
-
         ImageView imgView;
 
         public MyViewHolder(View v){
             super(v);
             name = v.findViewById(R.id.product_name);
-
             imgView=v.findViewById(R.id.pimage);
-
         }
 
     }
@@ -65,6 +68,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         String path=common.getDownloadDir()+"thumb/"+d;
         //holder.imgView.setImageBitmap(BitmapFactory.decodeFile(path));
         Picasso.get().load(MainActivity.SERVER+"thumbnail/"+d).placeholder(R.drawable.ic_launcher).into(holder.imgView);
+        holder.name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                imageDownload(c,p.images);
+                Toast.makeText(view.getContext(),"save image to "+common.getDownloadDir() + p.images,Toast.LENGTH_LONG).show();
+            }
+        });
+
         //holder.images.setText(d);
         //File file=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+"/"+d);
         //holder.imgView.setImageURI(Uri.fromFile(file));
@@ -82,9 +93,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 int position=holder.getAdapterPosition();
                 Product p=pList.get(position);
                 //openWebPage("http://172.96.193.223/images/"+p.images);
-                Toast.makeText(view.getContext(),"you clicked view:"+p.name+"(id:"+p.id+")",Toast.LENGTH_LONG).show();
+                //imageDownload(c,p.images);
+                Toast.makeText(view.getContext(),"clicked "+ p.name,Toast.LENGTH_LONG).show();
             }
         });
+
         /*
         holder.btnurl.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,6 +134,53 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
          */
         return holder;
+    }
+
+    //save image
+    public static void imageDownload(Context ctx, String url){
+        Picasso.get().load(MainActivity.SERVER+"images/"+url)
+                .into(getTarget(url));
+    }
+
+    //target to save
+    private static Target getTarget(final String url){
+        Target target = new Target(){
+
+            @Override
+            public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+                new Thread(new Runnable() {
+
+                    @Override
+                    public void run() {
+
+                        File file = new File(common.getDownloadDir() + url);
+                        try {
+                            file.createNewFile();
+                            FileOutputStream ostream = new FileOutputStream(file);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, ostream);
+                            ostream.flush();
+                            ostream.close();
+                        } catch (IOException e) {
+                            Log.e("IOException", e.getLocalizedMessage());
+                        }
+                    }
+                }).start();
+
+            }
+
+            @Override
+            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+            }
+
+
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+            }
+        };
+        return target;
     }
     /*
     public void searchWeb(String query) {

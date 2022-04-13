@@ -12,12 +12,10 @@
         app:showAsAction="never"
         android:title="服务器设置"/>
     <item
-        android:id="@+id/m_home"
-        android:icon="@drawable/home"
-        android:title="HOME"
+        android:id="@+id/m_add"
+        android:icon="@drawable/add"
+        android:title="添加商品"
         app:showAsAction="always"/>
-    <item
-        android:id="@+id/m_import"
-        android:title="数据导入" />
+
 
 </menu>

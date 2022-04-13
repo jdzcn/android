@@ -1,15 +1,10 @@
 <resources>
-    <string name="app_name">管家婆</string>
+    <string name="app_name">店小二</string>
     <string-array name="style">
         <item >明细表</item>
         <item >日汇总表</item>
         <item >月汇总表</item>
         <item >商品汇总表</item>
     </string-array>
-    <string-array name="style1">
-        <item >detail</item>
-        <item >day</item>
-        <item >month</item>
-        <item >product</item>
-    </string-array>
+
 </resources>
