@@ -70,10 +70,10 @@ public class ProductActivity extends AppCompatActivity {
         setSupportActionBar(myChildToolbar);
 
         // Get a support ActionBar corresponding to this toolbar
-        ActionBar ab = getSupportActionBar();
+        //ActionBar ab = getSupportActionBar();
 
         // Enable the Up button
-        ab.setDisplayHomeAsUpEnabled(true);
+        //ab.setDisplayHomeAsUpEnabled(true);
 
         db=new saleHelper(this);
         database=db.getWritableDatabase();

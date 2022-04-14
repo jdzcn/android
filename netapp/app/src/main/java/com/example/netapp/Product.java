@@ -1,6 +1,8 @@
 package com.example.netapp;
 
-public class Product {
+import java.io.Serializable;
+
+public class Product implements Serializable {
     public String id;
     public String name;
     public String cid;

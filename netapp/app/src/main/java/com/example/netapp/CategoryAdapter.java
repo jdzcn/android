@@ -47,7 +47,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
     @Override
     public void onBindViewHolder(final CategoryAdapter.MyViewHolder holder, final int position) {
         group_category p=cList.get(position);
-        if(p.id<=0) {
+        if(p.id.equals("0")) {
             holder.row_linearlayout.setBackgroundColor(Color.parseColor("#009688"));
             holder.sname.setGravity(Gravity.LEFT);
             holder.sname.setTextColor(Color.parseColor("#FFFFFF"));
@@ -66,8 +66,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
                 group_category p=cList.get(position);
                 //openWebPage("http://172.96.193.223/images/"+p.images);
                 //Toast.makeText(view.getContext(),"you clicked view:"+p.sname+"(id:"+p.id+")",Toast.LENGTH_LONG).show();
-                if(p.id>0) ((MainActivity) c).sendRequestWithHttpURLConnection("?cid=" + p.id);
-                else if(p.id<0) ((MainActivity) c).sendRequestWithHttpURLConnection("" );
+
+                 if(p.id.equals("-1")) ((MainActivity) c).sendRequestWithHttpURLConnection("" );
+                else if(!p.id.equals("0")) ((MainActivity) c).sendRequestWithHttpURLConnection("?cid=" + p.id);
+                
                 ((MainActivity) c).mDrawerLayout.closeDrawer(GravityCompat.START);
             }
         });

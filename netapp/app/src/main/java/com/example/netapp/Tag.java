@@ -1,6 +1,6 @@
 package com.example.netapp;
 
-public class group_category {
+public class Tag {
     public String id;
     public String name;
 }

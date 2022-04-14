@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.ContactsContract;
 import android.provider.Settings;
@@ -75,6 +76,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 Toast.makeText(view.getContext(),"save image to "+common.getDownloadDir() + p.images,Toast.LENGTH_LONG).show();
             }
         });
+        holder.imgView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int position=holder.getAdapterPosition();
+                Product p=pList.get(position);
+
+                Intent intent = new Intent(c, ViewActivity.class);
+                intent.putExtra("product", p);
+                ((MainActivity)c).startActivity(intent);
+            }
+        });
 
         //holder.images.setText(d);
         //File file=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+"/"+d);
@@ -87,17 +99,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.product_item,parent,false);
         MyViewHolder holder=new MyViewHolder(itemView);
+        /*
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int position=holder.getAdapterPosition();
                 Product p=pList.get(position);
-                //openWebPage("http://172.96.193.223/images/"+p.images);
-                //imageDownload(c,p.images);
-                Toast.makeText(view.getContext(),"clicked "+ p.name,Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(c, ViewActivity.class);
+                intent.putExtra("product", p);
+                ((MainActivity)c).startActivity(intent);
+
             }
         });
-
+        */
         /*
         holder.btnurl.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -66,9 +67,11 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
     public static String SERVER;
+    public static List<Tag> tlist;
+    public static String[] tagArray;
     public DrawerLayout mDrawerLayout;
     List<group_category> glist=new ArrayList<>();
-    List<Category> clist;
+    public static List<Category> clist;
     RecyclerViewAdapter adapter;
     RecyclerView rview,cview;
     CategoryAdapter cadapter;
@@ -118,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences sp=getSharedPreferences("data",MODE_PRIVATE);
         SERVER=sp.getString("server","http://172.96.193.223/");
-
+        get_tags();
         get_category();
         sendRequestWithHttpURLConnection("");
 
@@ -172,7 +175,11 @@ public class MainActivity extends AppCompatActivity {
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.m_add:
+                Product p=new Product();
 
+                Intent intent = new Intent(this, ViewActivity.class);
+                intent.putExtra("product", p);
+                startActivity(intent);
                 break;
             case R.id.m_search:
                 final EditText editText = new EditText(MainActivity.this);
@@ -275,7 +282,31 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
     }
-
+    private void get_tags() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    OkHttpClient client = new OkHttpClient();
+                    Request request = new Request.Builder()
+                            .url(MainActivity.SERVER+"tags.php")
+                            .build();
+                    Response response = client.newCall(request).execute();
+                    String responseData = response.body().string();
+                    Log.d("view",responseData);
+                    Gson gson = new Gson();
+                    tlist = gson.fromJson(responseData, new TypeToken<List<Tag>>() {}.getType());
+                    int size=tlist.size();
+                    tagArray= new String[size];
+                    for(int i=0;i<size;i++) {
+                        tagArray[i]=tlist.get(i).name;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
     private void show_category(final String response) {
         runOnUiThread(new Runnable() {
             @Override
@@ -288,7 +319,7 @@ public class MainActivity extends AppCompatActivity {
                 String cname="";
                 group_category a=new group_category();
                 a.name="首页";
-                a.id=-1;
+                a.id="-1";
                 glist.add(a);
                 for(int i=0;i<l;i++) {
                     Category c=clist.get(i);
@@ -296,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
                     group_category group=new group_category();
                     if(!c.cname.equals(cname)) {
                         group.name=c.cname+"类";
-                        group.id=0;
+                        group.id="0";
                         glist.add(group);
                     }
                     item.name=c.sname;
