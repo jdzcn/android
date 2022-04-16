@@ -282,7 +282,7 @@ public class ViewActivity extends AppCompatActivity {
                     OkHttpClient client = new OkHttpClient();
                     FormBody body = new FormBody.Builder().build();
                     Request request = new Request.Builder()
-                            .url(MainActivity.SERVER+"admin/product.php?id="+p.id)
+                            .url(MainActivity.SERVER+"admin/product.php?id="+p.id+"&img="+p.images)
                             .header("Authorization", Credentials.basic("sb", "songbin"))
                             .delete(body)
                             //.addHeader("Authorization","Bearer "+token)
