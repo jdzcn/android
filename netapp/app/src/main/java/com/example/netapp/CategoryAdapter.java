@@ -49,7 +49,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
         group_category p=cList.get(position);
         if(p.id.equals("0")) {
             holder.row_linearlayout.setBackgroundColor(Color.parseColor("#009688"));
-            holder.sname.setGravity(Gravity.LEFT);
+
             holder.sname.setTextColor(Color.parseColor("#FFFFFF"));
         }
         holder.sname.setText(p.name);

@@ -4,14 +4,21 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 
+import android.Manifest;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -30,11 +37,14 @@ import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import okhttp3.Credentials;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -76,14 +86,14 @@ public class ViewActivity extends AppCompatActivity {
         et_name.setText(p.name);
         et_spec.setText(p.spec);
         et_price.setText(p.price==null?"0":p.price);
-
+        /*
         imgProduct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loadimage(view);
+                takeimage(view);
             }
         });
-
+        */
 
         int size=MainActivity.clist.size();
         String[] categoryArray= new String[size];
@@ -207,12 +217,20 @@ public class ViewActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    //File file=new File(selimg.getPath());
+                    //try {
+                        //File file = FileUtil.from(ViewActivity.this,selimg);
+                        File file=new File(currentPhotoPath);
+                     //   Log.d("file", "File...:::: uti - "+file .getPath()+" file -" + file + " : " + file .exists());
+
+                    //} catch (IOException e) {
+                    //    e.printStackTrace();
+                    //}
                     OkHttpClient client = new OkHttpClient();
+                    Log.d("view",file.getName());
                     RequestBody formBody = new MultipartBody.Builder()
                             .setType(MultipartBody.FORM)
-                            //.addFormDataPart("file", file.getName(),
-                                    //RequestBody.create(MediaType.parse("text/plain"), file))
+                            .addFormDataPart("file", file.getName(),
+                                   RequestBody.create(MediaType.parse("text/plain"), file))
                             .addFormDataPart("name", et_name.getText().toString())
                             .addFormDataPart("cid", p.cid)
                             .addFormDataPart("imgstr", et_image.getText().toString())
@@ -222,9 +240,13 @@ public class ViewActivity extends AppCompatActivity {
                             .build();
                     Request request;
                     if(p.id==null)
-                    request = new Request.Builder().url(MainActivity.SERVER+"product.php").post(formBody).build();
+                    request = new Request.Builder()
+                            .header("Authorization", Credentials.basic("sb", "songbin"))
+                            .url(MainActivity.SERVER+"admin/product.php").post(formBody).build();
                     else
-                    request = new Request.Builder().url(MainActivity.SERVER+"product.php?id="+p.id).post(formBody).build();
+                    request = new Request.Builder()
+                            .header("Authorization", Credentials.basic("sb", "songbin"))
+                            .url(MainActivity.SERVER+"admin/product.php?id="+p.id).post(formBody).build();
 
                     Response response = client.newCall(request).execute();
                     Log.d("view",request.toString());
@@ -250,7 +272,8 @@ public class ViewActivity extends AppCompatActivity {
                     OkHttpClient client = new OkHttpClient();
                     FormBody body = new FormBody.Builder().build();
                     Request request = new Request.Builder()
-                            .url(MainActivity.SERVER+"product.php?id="+p.id)
+                            .url(MainActivity.SERVER+"admin/product.php?id="+p.id)
+                            .header("Authorization", Credentials.basic("sb", "songbin"))
                             .delete(body)
                             //.addHeader("Authorization","Bearer "+token)
                             .build();
@@ -310,42 +333,35 @@ public class ViewActivity extends AppCompatActivity {
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
+            //File photoFile = null;
+                selimg=null;
+                selimg= createImageUri();
 
-            }
             // Continue only if the File was successfully created
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.example.netapp.fileprovider",
-                        photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-            }
-        }
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,selimg);
+                startActivityForResult(takePictureIntent, REQUEST_CODE_TAKE_PICTURE);
 
+        }
 
     }
     String currentPhotoPath;
 
-    private File createImageFile() throws IOException {
+    private String createImageFile() {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir =  Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        String imageFileName = "p" + timeStamp + ".jpg";
 
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
+        return imageFileName;
+    }
 
-        // Save a file: path for use with ACTION_VIEW intents
-        currentPhotoPath = image.getAbsolutePath();
-        return image;
+    private Uri createImageUri() {
+        String status = Environment.getExternalStorageState();
+        // 判断是否有SD卡,优先使用SD卡存储,当没有SD卡时使用手机存储
+        if (status.equals(Environment.MEDIA_MOUNTED)) {
+            return getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, new ContentValues());
+        } else {
+            return getContentResolver().insert(MediaStore.Images.Media.INTERNAL_CONTENT_URI, new ContentValues());
+        }
     }
 
     void imageChooser() {
@@ -358,11 +374,12 @@ public class ViewActivity extends AppCompatActivity {
 
         // pass the constant to compare it
         // with the returned requestCode
-        startActivityForResult(Intent.createChooser(i, "Select Picture"), REQUEST_GET_PHOTO);
+        startActivityForResult(Intent.createChooser(i, "Select Picture"), REQUEST_SELECT_PICTURE);
     }
 
     // this function is triggered when user
     // selects the image from the imageChooser
+    /*
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -382,26 +399,27 @@ public class ViewActivity extends AppCompatActivity {
 
             }
 
-             */
+
             switch(requestCode) {
                 case REQUEST_TAKE_PHOTO:
                     //Uri selectedImage = data.getData();
                     //img.setImageURI(selectedImage);
-                    Bitmap thumbnail = data.getParcelableExtra("data");
-                    imgProduct.setImageBitmap(thumbnail);
-                    Log.d("view",currentPhotoPath);
+                    selimg=data.getData();
+                    imgProduct.setImageURI(selimg);
+
+                    //et_image.setText(file.getName());
                     break;
                 case REQUEST_GET_PHOTO:
                     selimg = data.getData();
                     imgProduct.setImageURI(selimg);
                     String path=selimg.getPath();
                     et_image.setText(path.substring(path.lastIndexOf("/")+1));
-                    file=new File(selimg.getPath());
+
                     break;
             }
         }
     }
-
+*/
     public String getRealPathFromURI(Context context, Uri contentUri) {
         Cursor cursor = null;
         try {
@@ -434,6 +452,98 @@ public class ViewActivity extends AppCompatActivity {
         Response response = client.newCall(request).execute();
         Log.d("view",request.toString());
         Log.d("view",response.toString());
+    }
+
+    public final int REQUEST_SELECT_PICTURE = 0x01;
+    public final int REQUEST_CODE_TAKE_PICTURE = 0x2;
+    public static String TEMP_PHOTO_FILE_NAME ="photo_";
+    Uri mImageCaptureUri;
+    File mFileTemp;
+
+    public void initTempFile(){
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+
+            mFileTemp = new File(Environment.getExternalStorageDirectory() + File.separator
+                    + getResources().getString(R.string.app_foldername) + File.separator
+                    + getResources().getString(R.string.pictures_folder)
+                    , TEMP_PHOTO_FILE_NAME
+                    + System.currentTimeMillis() + ".jpg");
+            mFileTemp.getParentFile().mkdirs();
+        } else {
+            mFileTemp = new File(getFilesDir() + File.separator
+                    + getResources().getString(R.string.app_foldername)
+                    + File.separator + getResources().getString(R.string.pictures_folder)
+                    , TEMP_PHOTO_FILE_NAME + System.currentTimeMillis() + ".jpg");
+            mFileTemp.getParentFile().mkdirs();
+        }
+    }
+    public void openCamera(){
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            mImageCaptureUri = null;
+            mImageCaptureUri = Uri.fromFile(mFileTemp);
+
+
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
+            intent.putExtra("return-data", true);
+            startActivityForResult(intent, REQUEST_CODE_TAKE_PICTURE);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+        Bitmap bitmap;
+
+        switch (requestCode) {
+
+            case REQUEST_SELECT_PICTURE:
+                try {
+                    Uri uri = data.getData();
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                        Bitmap bitmapScaled = Bitmap.createScaledBitmap(bitmap, 800, 800, true);
+                        Drawable drawable=new BitmapDrawable(bitmapScaled);
+                        currentPhotoPath=common.getDownloadDir()+createImageFile();
+                        saveJPGE_After(bitmapScaled,currentPhotoPath);
+                        imgProduct.setImageDrawable(drawable);
+                        //mImage.setVisibility(View.VISIBLE);
+                    } catch (IOException e) {
+                        Log.v("act result", "there is an error : ");
+                    }
+                } catch (Exception e) {
+                    Log.v("act result", "there is an error : ");
+                }
+                break;
+            case REQUEST_CODE_TAKE_PICTURE:
+                try{
+                    Bitmap bitmappicture = MediaStore.Images.Media.getBitmap(getContentResolver() , selimg);
+                    currentPhotoPath=common.getDownloadDir()+createImageFile();
+                    saveJPGE_After(bitmappicture,currentPhotoPath);
+                    imgProduct.setImageBitmap(bitmappicture);
+                    //mImage.setVisibility(View.VISIBLE);
+                }catch (IOException e){
+                    Log.v("error camera",e.getMessage());
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public static void saveJPGE_After(Bitmap bitmap, String path) {
+        File file = new File(path);
+        try {/*from w  w  w.  j a v  a 2 s  .c  om*/
+            FileOutputStream out = new FileOutputStream(file);
+            if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)) {
+                out.flush();
+                out.close();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

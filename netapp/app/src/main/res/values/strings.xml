@@ -2,4 +2,7 @@
     <string name="app_name">御雅堂</string>
     <string name="ok">确定</string>
     <string name="cancel">取消</string>
+    <string name="app_foldername">com.example.netapp</string>
+
+    <string name="pictures_folder">pictures</string>
 </resources>

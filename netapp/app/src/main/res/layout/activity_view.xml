@@ -53,6 +53,7 @@
         android:layout_marginStart="40dp"
         android:ems="10"
         android:inputType="textPersonName"
+        android:selectAllOnFocus="true"
         android:text="Name"
         app:layout_constraintBaseline_toBaselineOf="@+id/textView4"
         app:layout_constraintStart_toEndOf="@+id/textView4" />
@@ -74,6 +75,7 @@
         android:layout_marginStart="12dp"
         android:ems="10"
         android:inputType="textPersonName"
+        android:selectAllOnFocus="true"
         android:text="Name"
         app:layout_constraintBaseline_toBaselineOf="@+id/textView2"
         app:layout_constraintStart_toEndOf="@+id/textView" />
@@ -107,6 +109,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="68dp"
+        android:selectAllOnFocus="true"
         android:text="商品名称："
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
@@ -118,6 +121,7 @@
         android:layout_marginStart="12dp"
         android:ems="10"
         android:inputType="textPersonName"
+        android:selectAllOnFocus="false"
         android:text="Name"
         app:layout_constraintBaseline_toBaselineOf="@+id/textView"
         app:layout_constraintStart_toEndOf="@+id/textView" />
@@ -127,6 +131,7 @@
         android:layout_width="500px"
         android:layout_height="500px"
         android:layout_marginTop="16dp"
+        android:onClick="loadimage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
@@ -169,8 +174,20 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
+        android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    <TextView
+        android:id="@+id/tvImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="72dp"
+        android:onClick="takeimage"
+        android:text="拍照"
+        android:textColor="#3F51B5"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
