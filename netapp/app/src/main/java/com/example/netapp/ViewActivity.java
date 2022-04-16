@@ -166,7 +166,7 @@ public class ViewActivity extends AppCompatActivity {
                                     p.tags+=MainActivity.tlist.get(j).id+",";
                                     str+=MainActivity.tlist.get(j).name+",";
                                 }
-                                et_name.setText(str.replace(",",""));
+                                et_name.setText(str.replace(",","")+et_name.getText().toString());
                                 tv_tags.setText(str.substring(0,str.length()-1));
                                 p.tags=p.tags.substring(0,p.tags.length()-1);
 
@@ -195,7 +195,7 @@ public class ViewActivity extends AppCompatActivity {
                     Log.d("view", "p.spec:" + et_spec.getText().toString());
                     Log.d("view", "p.price:" + et_price.getText().toString());
                     savetodatabase();
-                    Toast.makeText(ViewActivity.this, "save successful.", Toast.LENGTH_SHORT).show();
+
             }
         });
         btn_cancel.setOnClickListener(new View.OnClickListener() {
@@ -217,27 +217,35 @@ public class ViewActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    //try {
-                        //File file = FileUtil.from(ViewActivity.this,selimg);
-                        File file=new File(currentPhotoPath);
-                     //   Log.d("file", "File...:::: uti - "+file .getPath()+" file -" + file + " : " + file .exists());
-
-                    //} catch (IOException e) {
-                    //    e.printStackTrace();
-                    //}
                     OkHttpClient client = new OkHttpClient();
-                    Log.d("view",file.getName());
-                    RequestBody formBody = new MultipartBody.Builder()
-                            .setType(MultipartBody.FORM)
-                            .addFormDataPart("file", file.getName(),
-                                   RequestBody.create(MediaType.parse("text/plain"), file))
-                            .addFormDataPart("name", et_name.getText().toString())
-                            .addFormDataPart("cid", p.cid)
-                            .addFormDataPart("imgstr", et_image.getText().toString())
-                            .addFormDataPart("tags", p.tags)
-                            .addFormDataPart("spec", et_spec.getText().toString())
-                            .addFormDataPart("price", et_price.getText().toString())
-                            .build();
+                    RequestBody formBody;
+
+                    if(currentPhotoPath!=null) {
+                        File file = new File(currentPhotoPath);
+
+                        formBody = new MultipartBody.Builder()
+                                .setType(MultipartBody.FORM)
+                                .addFormDataPart("file", file.getName(),
+                                        RequestBody.create(MediaType.parse("text/plain"), file))
+                                .addFormDataPart("name", et_name.getText().toString())
+                                .addFormDataPart("cid", p.cid)
+                                .addFormDataPart("imgstr", et_image.getText().toString())
+                                .addFormDataPart("tags", p.tags)
+                                .addFormDataPart("spec", et_spec.getText().toString())
+                                .addFormDataPart("price", et_price.getText().toString())
+                                .build();
+                    }
+                    else {
+                        formBody = new MultipartBody.Builder()
+                                .setType(MultipartBody.FORM)
+                                .addFormDataPart("name", et_name.getText().toString())
+                                .addFormDataPart("cid", p.cid)
+                                .addFormDataPart("imgstr", et_image.getText().toString())
+                                .addFormDataPart("tags", p.tags)
+                                .addFormDataPart("spec", et_spec.getText().toString())
+                                .addFormDataPart("price", et_price.getText().toString())
+                                .build();
+                    }
                     Request request;
                     if(p.id==null)
                     request = new Request.Builder()
@@ -249,6 +257,8 @@ public class ViewActivity extends AppCompatActivity {
                             .url(MainActivity.SERVER+"admin/product.php?id="+p.id).post(formBody).build();
 
                     Response response = client.newCall(request).execute();
+
+                    showResponse(response.code()+response.message());
                     Log.d("view",request.toString());
                     Log.d("view",request.body().toString());
                     Log.d("view",response.toString());
@@ -280,6 +290,7 @@ public class ViewActivity extends AppCompatActivity {
                     Response response = client.newCall(request).execute();
                     String responseData = response.body().string();
                     Log.d("view",responseData);
+                    showResponse(response.code()+response.message());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -287,6 +298,15 @@ public class ViewActivity extends AppCompatActivity {
         }).start();
     }
 
+    private void showResponse(final String response) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // 在这里进行UI操作，将结果显示到界面上
+                Toast.makeText(ViewActivity.this, response, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
     public String findCategoryName(String id, List<Category> categorys) {
         String str="";
         for (Category category : categorys)
@@ -495,7 +515,7 @@ public class ViewActivity extends AppCompatActivity {
             return;
         }
         Bitmap bitmap;
-
+        currentPhotoPath=common.getDownloadDir()+createImageFile();
         switch (requestCode) {
 
             case REQUEST_SELECT_PICTURE:
@@ -505,7 +525,7 @@ public class ViewActivity extends AppCompatActivity {
                         bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                         Bitmap bitmapScaled = Bitmap.createScaledBitmap(bitmap, 800, 800, true);
                         Drawable drawable=new BitmapDrawable(bitmapScaled);
-                        currentPhotoPath=common.getDownloadDir()+createImageFile();
+
                         saveJPGE_After(bitmapScaled,currentPhotoPath);
                         imgProduct.setImageDrawable(drawable);
                         //mImage.setVisibility(View.VISIBLE);
@@ -519,7 +539,7 @@ public class ViewActivity extends AppCompatActivity {
             case REQUEST_CODE_TAKE_PICTURE:
                 try{
                     Bitmap bitmappicture = MediaStore.Images.Media.getBitmap(getContentResolver() , selimg);
-                    currentPhotoPath=common.getDownloadDir()+createImageFile();
+                    //currentPhotoPath=common.getDownloadDir()+createImageFile();
                     saveJPGE_After(bitmappicture,currentPhotoPath);
                     imgProduct.setImageBitmap(bitmappicture);
                     //mImage.setVisibility(View.VISIBLE);
@@ -528,6 +548,7 @@ public class ViewActivity extends AppCompatActivity {
                 }
                 break;
         }
+        et_image.setText(currentPhotoPath.substring(currentPhotoPath.lastIndexOf("/")+1));
         super.onActivityResult(requestCode, resultCode, data);
     }
 
