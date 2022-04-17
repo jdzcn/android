@@ -243,11 +243,11 @@ public class ViewActivity extends AppCompatActivity {
                     Request request;
                     if(p.id==null)
                     request = new Request.Builder()
-                            .header("Authorization", Credentials.basic("sb", "songbin"))
+                            .header("Authorization", Credentials.basic(MainActivity.USER, MainActivity.PASS))
                             .url(MainActivity.SERVER+"admin/product.php").post(formBody).build();
                     else
                     request = new Request.Builder()
-                            .header("Authorization", Credentials.basic("sb", "songbin"))
+                            .header("Authorization", Credentials.basic(MainActivity.USER, MainActivity.PASS))
                             .url(MainActivity.SERVER+"admin/product.php?id="+p.id).post(formBody).build();
 
                     Response response = client.newCall(request).execute();

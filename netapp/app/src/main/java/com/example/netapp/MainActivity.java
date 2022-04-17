@@ -70,7 +70,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
-    public static String SERVER;
+    public static String SERVER,USER,PASS;
     public static List<Tag> tlist;
     public static String[] tagArray;
     public DrawerLayout mDrawerLayout;
@@ -137,6 +137,8 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences sp=getSharedPreferences("data",MODE_PRIVATE);
         SERVER=sp.getString("server","http://172.96.193.223/");
+        USER=sp.getString("user","sb");
+        PASS=sp.getString("pass","songbin");
         get_tags();
         get_category();
         sendRequestWithHttpURLConnection(curview);
@@ -193,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
                     FormBody body = new FormBody.Builder().build();
                     Request request = new Request.Builder()
                             .url(MainActivity.SERVER+"admin/product.php?id="+id+"&img="+img)
-                            .header("Authorization", Credentials.basic("sb", "songbin"))
+                            .header("Authorization", Credentials.basic(USER, PASS))
                             .delete(body)
                             //.addHeader("Authorization","Bearer "+token)
                             .build();
@@ -233,6 +235,8 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         SharedPreferences.Editor editor = getSharedPreferences("data", 0).edit();
         editor.putString("server",SERVER);
+        editor.putString("user",USER);
+        editor.putString("pass",PASS);
         editor.commit();
     }
 
@@ -291,18 +295,34 @@ public class MainActivity extends AppCompatActivity {
                         }).show();
                 break;
             case R.id.m_server:
-                final EditText etServer = new EditText(MainActivity.this);
-                etServer.setText(SERVER);
-                AlertDialog.Builder sDialog =
-                        new AlertDialog.Builder(MainActivity.this);
-                sDialog.setTitle("服务器地址").setView(etServer);
-                sDialog.setPositiveButton("确定",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                SERVER=etServer.getText().toString();
-                            }
-                        }).show();
+
+                AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
+                final View layout = getLayoutInflater().inflate(R.layout.server, null);//获取自定义布局
+
+                builder2.setView(layout);
+                EditText et_name=(EditText)layout.findViewById(R.id.et_name);
+                et_name.setText(SERVER);
+                EditText et_user=(EditText)layout.findViewById(R.id.et_user);
+                et_user.setText(USER);
+                EditText et_pass=(EditText)layout.findViewById(R.id.et_pass);
+                et_pass.setText(PASS);
+                builder2.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        SERVER=et_name.getText().toString();
+                        USER=et_user.getText().toString();
+                        PASS=et_pass.getText().toString();
+                    }
+                });
+                //取消
+                builder2.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        // TODO Auto-generated method stub
+
+                    }
+                }).show();
+
                 break;
             default:
         }
