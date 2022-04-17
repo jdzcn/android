@@ -67,9 +67,9 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
                 //openWebPage("http://172.96.193.223/images/"+p.images);
                 //Toast.makeText(view.getContext(),"you clicked view:"+p.sname+"(id:"+p.id+")",Toast.LENGTH_LONG).show();
 
-                 if(p.id.equals("-1")) ((MainActivity) c).sendRequestWithHttpURLConnection("" );
-                else if(!p.id.equals("0")) ((MainActivity) c).sendRequestWithHttpURLConnection("?cid=" + p.id);
-                
+                 if(p.id.equals("-1")) ((MainActivity) c).curview="";
+                else if(!p.id.equals("0")) ((MainActivity) c).curview="?cid=" + p.id;
+                ((MainActivity) c).sendRequestWithHttpURLConnection(((MainActivity) c).curview);
                 ((MainActivity) c).mDrawerLayout.closeDrawer(GravityCompat.START);
             }
         });

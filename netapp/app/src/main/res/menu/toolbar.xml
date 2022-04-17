@@ -12,9 +12,9 @@
         app:showAsAction="never"
         android:title="服务器设置"/>
     <item
-        android:id="@+id/m_add"
-        android:icon="@drawable/add"
-        android:title="添加商品"
+        android:id="@+id/m_refresh"
+        android:icon="@drawable/refresh"
+        android:title="refresh"
         app:showAsAction="always"/>
 
 

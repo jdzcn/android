@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView cview;
     GridView rview;
     CategoryAdapter cadapter;
+    String curview="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -138,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
         SERVER=sp.getString("server","http://172.96.193.223/");
         get_tags();
         get_category();
-        sendRequestWithHttpURLConnection("");
+        sendRequestWithHttpURLConnection(curview);
 
     }
 
@@ -153,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
     public void showproduct(Product p) {
         Intent intent = new Intent(MainActivity.this, ViewActivity.class);
         intent.putExtra("product", p);
-        startActivity(intent);
+        startActivityForResult(intent,1);
     }
 
     @Override
@@ -163,9 +164,11 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.m_edit:
                 showproduct(p);
+                sendRequestWithHttpURLConnection(curview);
                 return true;
             case R.id.m_delete:
                 delete(p.id,p.images);
+
                 return true;
             case R.id.m_open:
                 openWebPage(SERVER+"view.php?pid="+p.id);
@@ -211,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 // 在这里进行UI操作，将结果显示到界面上
                 Toast.makeText(MainActivity.this, response, Toast.LENGTH_LONG).show();
+                sendRequestWithHttpURLConnection(curview);
             }
         });
     }
@@ -243,7 +247,23 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, ViewActivity.class);
         intent.putExtra("product", p);
-        startActivity(intent);
+        startActivityForResult(intent,1);
+        sendRequestWithHttpURLConnection(curview);
+    }
+    @Override
+    protected void onActivityResult(int requestCode,int resultCode,Intent data) {
+        switch (requestCode) {
+            case 1:
+                if (resultCode == RESULT_OK) {
+
+                    if(data.getBooleanExtra("save",false))
+                        sendRequestWithHttpURLConnection(curview);
+
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -252,8 +272,8 @@ public class MainActivity extends AppCompatActivity {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 break;
-            case R.id.m_add:
-                add();
+            case R.id.m_refresh:
+                sendRequestWithHttpURLConnection(curview);
                 break;
             case R.id.m_search:
                 final EditText editText = new EditText(MainActivity.this);
@@ -265,7 +285,8 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String t=editText.getText().toString();
-                                if(t.length()>0) sendRequestWithHttpURLConnection("?key="+t);
+                                curview="?key="+t;
+                                if(t.length()>0) sendRequestWithHttpURLConnection(curview);
                             }
                         }).show();
                 break;

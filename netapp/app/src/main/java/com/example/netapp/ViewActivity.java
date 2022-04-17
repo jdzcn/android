@@ -272,7 +272,10 @@ public class ViewActivity extends AppCompatActivity {
             @Override
             public void run() {
                 // 在这里进行UI操作，将结果显示到界面上
-                Toast.makeText(ViewActivity.this, response, Toast.LENGTH_LONG).show();
+                Toast.makeText(ViewActivity.this, response, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                intent.putExtra("save", true);
+                setResult(RESULT_OK, intent);
                 finish();
             }
         });
