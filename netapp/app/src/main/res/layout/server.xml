@@ -33,7 +33,7 @@
     android:layout_width="0dp"
     android:layout_weight="3"
     android:layout_height="wrap_content"
-
+    android:selectAllOnFocus="true"
     android:hint="主机地址"
     />
 
@@ -53,9 +53,6 @@
 <EditText
     android:id="@+id/et_user"
     android:layout_width="0dp"
-    android:numeric="integer"
-    android:focusable="true"
-    
     android:selectAllOnFocus="true"
     android:layout_weight="3"
     android:layout_height="wrap_content"
@@ -72,6 +69,7 @@
     android:layout_weight="1"
     android:layout_height="wrap_content"
     android:textSize="20dp"
+
     android:layout_marginLeft="5dp"
     android:text="密码"/>
 
