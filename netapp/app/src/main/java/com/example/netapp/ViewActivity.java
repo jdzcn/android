@@ -56,7 +56,7 @@ import okhttp3.Response;
 public class ViewActivity extends AppCompatActivity {
     EditText et_name,et_spec,et_price,et_image;
     TextView tv_tags,tv_category;
-    Button btn_save,btn_cancel,btn_delete;
+    Button btn_save,btn_cancel;
     ImageView imgProduct;
     Product p;
     public boolean[] selTags;
@@ -82,7 +82,7 @@ public class ViewActivity extends AppCompatActivity {
         tv_category=(TextView)findViewById(R.id.tvCategory);
         btn_cancel=(Button)findViewById(R.id.btnCancel);
         btn_save=(Button)findViewById(R.id.btnSave);
-        btn_delete=(Button)findViewById(R.id.btnDelete);
+
         et_name.setText(p.name);
         et_spec.setText(p.spec);
         et_price.setText(p.price==null?"0":p.price);
@@ -204,13 +204,7 @@ public class ViewActivity extends AppCompatActivity {
                 finish();
             }
         });
-        btn_delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                delete();
-                finish();
-            }
-        });
+
     }
     private void savetodatabase() {
         new Thread(new Runnable() {
@@ -273,40 +267,17 @@ public class ViewActivity extends AppCompatActivity {
             }
         }).start();
     }
-
-    private void delete() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    OkHttpClient client = new OkHttpClient();
-                    FormBody body = new FormBody.Builder().build();
-                    Request request = new Request.Builder()
-                            .url(MainActivity.SERVER+"admin/product.php?id="+p.id+"&img="+p.images)
-                            .header("Authorization", Credentials.basic("sb", "songbin"))
-                            .delete(body)
-                            //.addHeader("Authorization","Bearer "+token)
-                            .build();
-                    Response response = client.newCall(request).execute();
-                    String responseData = response.body().string();
-                    Log.d("view",responseData);
-                    showResponse(response.code()+response.message());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
-
     private void showResponse(final String response) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 // 在这里进行UI操作，将结果显示到界面上
                 Toast.makeText(ViewActivity.this, response, Toast.LENGTH_LONG).show();
+                finish();
             }
         });
     }
+
     public String findCategoryName(String id, List<Category> categorys) {
         String str="";
         for (Category category : categorys)

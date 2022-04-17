@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -34,6 +35,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,6 +63,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.Credentials;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -71,9 +75,11 @@ public class MainActivity extends AppCompatActivity {
     public static String[] tagArray;
     public DrawerLayout mDrawerLayout;
     List<group_category> glist=new ArrayList<>();
+    List<Product> plist=new ArrayList<>();
     public static List<Category> clist;
-    RecyclerViewAdapter adapter;
-    RecyclerView rview,cview;
+    ProductAdapter adapter;
+    RecyclerView cview;
+    GridView rview;
     CategoryAdapter cadapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,12 +100,21 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "You click floatingbutton.", Toast.LENGTH_SHORT).show();
+                add();
             }
         });
 
-        rview=(RecyclerView)findViewById(R.id.rview);
-        //registerForContextMenu(rview);
+
+        rview=(GridView) findViewById(R.id.rview);
+        registerForContextMenu(rview);
+        rview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Product p=plist.get(i);
+
+                showproduct(p);
+            }
+        });
         cview=(RecyclerView)findViewById(R.id.cview);
         /*
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -115,9 +130,9 @@ public class MainActivity extends AppCompatActivity {
         cview.setLayoutManager(categorylayout);
         cview.addItemDecoration(new DividerItemDecoration(rview.getContext(), DividerItemDecoration.VERTICAL));
 
-        GridLayoutManager layoutManager=new GridLayoutManager(this,2 );
+        //GridLayoutManager layoutManager=new GridLayoutManager(this,2 );
         //layoutManager.setOrientation(layoutManager.HORIZONTAL);
-        rview.setLayoutManager(layoutManager);
+        //rview.setLayoutManager(layoutManager);
 
         SharedPreferences sp=getSharedPreferences("data",MODE_PRIVATE);
         SERVER=sp.getString("server","http://172.96.193.223/");
@@ -126,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         sendRequestWithHttpURLConnection("");
 
     }
-/*
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
@@ -135,22 +150,77 @@ public class MainActivity extends AppCompatActivity {
         inflater.inflate(R.menu.product_menu, menu);
     }
 
+    public void showproduct(Product p) {
+        Intent intent = new Intent(MainActivity.this, ViewActivity.class);
+        intent.putExtra("product", p);
+        startActivity(intent);
+    }
+
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        Product p=plist.get(info.position);
         switch (item.getItemId()) {
+            case R.id.m_edit:
+                showproduct(p);
+                return true;
             case R.id.m_delete:
-
+                delete(p.id,p.images);
                 return true;
             case R.id.m_open:
+                openWebPage(SERVER+"view.php?pid="+p.id);
+                return true;
+            case R.id.m_openimage:
+                openWebPage(SERVER+"images/"+p.images);
                 return true;
             case R.id.m_download:
+                imageDownload(this,p.images);
+                Toast.makeText(this,"save image to "+common.getDownloadDir() + p.images,Toast.LENGTH_LONG).show();
                 return true;
                 default:
                 return super.onContextItemSelected(item);
         }
     }
-*/
+    private void delete(String id,String img) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    OkHttpClient client = new OkHttpClient();
+                    FormBody body = new FormBody.Builder().build();
+                    Request request = new Request.Builder()
+                            .url(MainActivity.SERVER+"admin/product.php?id="+id+"&img="+img)
+                            .header("Authorization", Credentials.basic("sb", "songbin"))
+                            .delete(body)
+                            //.addHeader("Authorization","Bearer "+token)
+                            .build();
+                    Response response = client.newCall(request).execute();
+                    String responseData = response.body().string();
+                    Log.d("view",responseData);
+                    showmsg(response.code()+response.message());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    private void showmsg(final String response) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // 在这里进行UI操作，将结果显示到界面上
+                Toast.makeText(MainActivity.this, response, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+    public void openWebPage(String url) {
+        Uri webpage = Uri.parse(url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }
 
 
     @Override
@@ -168,6 +238,14 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    public void add() {
+        Product p=new Product();
+
+        Intent intent = new Intent(this, ViewActivity.class);
+        intent.putExtra("product", p);
+        startActivity(intent);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -175,11 +253,7 @@ public class MainActivity extends AppCompatActivity {
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.m_add:
-                Product p=new Product();
-
-                Intent intent = new Intent(this, ViewActivity.class);
-                intent.putExtra("product", p);
-                startActivity(intent);
+                add();
                 break;
             case R.id.m_search:
                 final EditText editText = new EditText(MainActivity.this);
@@ -350,44 +424,43 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 // 在这里进行UI操作，将结果显示到界面上
                 Gson gson = new Gson();
-                List<Product> plist = gson.fromJson(response, new TypeToken<List<Product>>() {}.getType());
-                adapter = new RecyclerViewAdapter(MainActivity.this,plist);
-
-
+                 plist = gson.fromJson(response, new TypeToken<List<Product>>() {}.getType());
+                adapter = new ProductAdapter(MainActivity.this,R.layout.product_item,plist);
                 rview.setAdapter(adapter);
             }
         });
     }
 
-    /*save image
-    private Target picassoImageTarget(Context context, final String imageDir, final String imageName) {
-        Log.d("picassoImageTarget", " picassoImageTarget");
-        ContextWrapper cw = new ContextWrapper(context);
-        final File directory = cw.getDir(imageDir, Context.MODE_PRIVATE); // path to /data/data/yourapp/app_imageDir
-        return new Target() {
+    //save image
+    public static void imageDownload(Context ctx, String url){
+        Picasso.get().load(MainActivity.SERVER+"images/"+url)
+                .into(getTarget(url));
+    }
+
+    //target to save
+    private static Target getTarget(final String url){
+        Target target = new Target(){
+
             @Override
             public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
                 new Thread(new Runnable() {
+
                     @Override
                     public void run() {
-                        final File myImageFile = new File(directory, imageName); // Create image file
-                        FileOutputStream fos = null;
-                        try {
-                            fos = new FileOutputStream(myImageFile);
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } finally {
-                            try {
-                                fos.close();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        Log.i("image", "image saved to >>>" + myImageFile.getAbsolutePath());
 
+                        File file = new File(common.getDownloadDir() + url);
+                        try {
+                            file.createNewFile();
+                            FileOutputStream ostream = new FileOutputStream(file);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, ostream);
+                            ostream.flush();
+                            ostream.close();
+                        } catch (IOException e) {
+                            Log.e("IOException", e.getLocalizedMessage());
+                        }
                     }
                 }).start();
+
             }
 
             @Override
@@ -396,13 +469,14 @@ public class MainActivity extends AppCompatActivity {
             }
 
 
+
             @Override
             public void onPrepareLoad(Drawable placeHolderDrawable) {
-                if (placeHolderDrawable != null) {}
+
             }
         };
+        return target;
     }
-*/
 
 
 }

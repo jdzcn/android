@@ -66,7 +66,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         String t = p.name;
         String d = p.images;
         holder.name.setText(t);
-        String path=common.getDownloadDir()+"thumb/"+d;
+        //String path=common.getDownloadDir()+"thumb/"+d;
         //holder.imgView.setImageBitmap(BitmapFactory.decodeFile(path));
         Picasso.get().load(MainActivity.SERVER+"thumbnail/"+d).placeholder(R.drawable.ic_launcher).into(holder.imgView);
         holder.name.setOnClickListener(new View.OnClickListener() {
