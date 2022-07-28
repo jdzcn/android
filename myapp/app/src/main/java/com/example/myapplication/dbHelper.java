@@ -20,12 +20,12 @@ public class dbHelper extends SQLiteOpenHelper{
     private static final int DB_VERSION = 1;
     private static final String DB_NAME = "product.db";
 
-    public static final String CREATE_PRODUCT = "CREATE TABLE product (pid integer primary key,name text, image text,sid integer ,  cid integer,gid integer, spec text, price integer)";
-    public static final String CREATE_STYLE = "CREATE TABLE style ( sid integer primary key, name text)";
-    public static final String CREATE_CRAFT = "CREATE TABLE craft ( cid integer primary key, name text, description text)";
-    public static final String CREATE_GRAPH = "CREATE TABLE graph ( gid integer primary key, name text, description text)";
-    public static final String CREATE_TITLE = "CREATE TABLE title ( tid integer primary key, name text,gid integer)";
-    public static final String CREATE_VERSE = "CREATE TABLE verse ( vid integer primary key, name text,gid integer)";
+    public static final String CREATE_PRODUCT = "CREATE TABLE product (pid integer primary key autoincrement,name text, image text,sid integer ,  cid integer,gid integer, spec text, price integer)";
+    public static final String CREATE_STYLE = "CREATE TABLE style ( sid integer primary key autoincrement, name text)";
+    public static final String CREATE_CRAFT = "CREATE TABLE craft ( cid integer primary key autoincrement, name text, description text)";
+    public static final String CREATE_GRAPH = "CREATE TABLE graph ( gid integer primary key autoincrement, name text, description text)";
+    public static final String CREATE_TITLE = "CREATE TABLE title ( tid integer primary key autoincrement, name text,gid integer)";
+    public static final String CREATE_VERSE = "CREATE TABLE verse ( vid integer primary key autoincrement, name text,gid integer)";
 
     private Context mContext;
 
