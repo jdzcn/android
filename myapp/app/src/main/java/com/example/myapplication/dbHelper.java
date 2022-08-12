@@ -18,6 +18,7 @@ import java.io.IOException;
 
 public class dbHelper extends SQLiteOpenHelper{
     private static final int DB_VERSION = 1;
+    /*
     private static final String DB_NAME = "product.db";
 
     public static final String CREATE_PRODUCT = "CREATE TABLE product (pid integer primary key autoincrement,name text, image text,sid integer ,  cid integer,gid integer, spec text, price integer)";
@@ -26,7 +27,10 @@ public class dbHelper extends SQLiteOpenHelper{
     public static final String CREATE_GRAPH = "CREATE TABLE graph ( gid integer primary key autoincrement, name text, description text)";
     public static final String CREATE_TITLE = "CREATE TABLE title ( tid integer primary key autoincrement, name text,gid integer)";
     public static final String CREATE_VERSE = "CREATE TABLE verse ( vid integer primary key autoincrement, name text,gid integer)";
-
+    */
+    private static final String DB_NAME = "blog.db";
+    public static final String CREATE_blog = "CREATE TABLE blog ( id integer primary key autoincrement, title text,cid integer,blog text)";
+    public static final String CREATE_category = "CREATE TABLE category ( cid integer primary key autoincrement, name text)";
     private Context mContext;
 
     public dbHelper(Context context) {
@@ -37,13 +41,18 @@ public class dbHelper extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         // create table Orders(Id integer primary key, CustomName text, OrderPrice integer, Country text);
+        /*
         sqLiteDatabase.execSQL(CREATE_PRODUCT);
         sqLiteDatabase.execSQL(CREATE_STYLE);
         sqLiteDatabase.execSQL(CREATE_CRAFT);
         sqLiteDatabase.execSQL(CREATE_GRAPH);
         sqLiteDatabase.execSQL(CREATE_TITLE);
         sqLiteDatabase.execSQL(CREATE_VERSE);
+        */
+        sqLiteDatabase.execSQL(CREATE_blog);
+        sqLiteDatabase.execSQL(CREATE_category);
         Log.e("MainActivity","database create successful");
+
     }
 
     @Override
